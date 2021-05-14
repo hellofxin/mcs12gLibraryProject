@@ -20,3 +20,7 @@ const Mcs12gPwmDataType gMcs12gPwmBswCfgData  = {
 	{ 100, 100, 100, 100, 		100 ,100, 100, 100 }
 };
 
+unsigned char mcs12g_pwm_postInit(Mcs12gPwmDataType* this){
+	return ERROR_PWM_OK;	
+}
+

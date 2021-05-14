@@ -9,4 +9,6 @@
 
 extern const Mcs12gPwmDataType gMcs12gPwmBswCfgData;
 
+unsigned char mcs12g_pwm_postInit(Mcs12gPwmDataType* this);
+
 #endif

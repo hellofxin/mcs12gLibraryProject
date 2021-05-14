@@ -76,6 +76,7 @@ unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswCfgData
 	this->mStatus = 0;
         this->mUpdateRequest = 1;
 	this->mStatus = mcs12g_pwm_update(this);     
+	this->mStatus = mcs12g_pwm_postInit(this);
 	return this->mStatus;
 }
 
@@ -87,13 +88,14 @@ unsigned char mcs12g_pwm_update(Mcs12gPwmDataType* this){
 		this->mUpdateRequest = 0;
 		PWME = 0;
 		PWMPOL = this->mPolarity;
-		PWMCLK = 0;
-		PWMPRCLK = 0;
+		PWMCLK = 0xFF;
+		PWMPRCLK_PCKA = 4;
+		PWMPRCLK_PCKB = 4;
 		PWMCAE = this->mCenterAligned;
 		PWMCTL =  PWMCTL_PFRZ_MASK | PWMCTL_PSWAI_MASK;
 		PWMCLKAB = PWMCLKAB_PCLKAB2_MASK |  PWMCLKAB_PCLKAB3_MASK | PWMCLKAB_PCLKAB6_MASK | PWMCLKAB_PCLKAB7_MASK;
-		PWMSCLA = 1;
-		PWMSCLB = 1;
+		PWMSCLA = 50;
+		PWMSCLB = 50;
 		PWMPER0 = this->mPeriod[0];
 		PWMPER1 = this->mPeriod[1];
 		PWMPER2 = this->mPeriod[2];
