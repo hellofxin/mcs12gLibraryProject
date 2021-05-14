@@ -2,17 +2,15 @@
 #include "derivative.h"      /* derivative-specific definitions */
 
 
+#include "mcs12g_pwm.h"
 
 void main(void) {
-  /* put your own code here */
-  
 
-
+ 	mcs12g_pwm_init(&gMcs12gPwmData, &gMcs12gPwmAswCfgData, &gMcs12gPwmBswCfgData);
 	EnableInterrupts;
-
-
-  for(;;) {
-    _FEED_COP(); /* feeds the dog */
-  } /* loop forever */
-  /* please make sure that you never leave main */
+	
+	for(;;) {
+		_FEED_COP(); 
+		mcs12g_pwm_update(&gMcs12gPwmData);
+	} 
 }
