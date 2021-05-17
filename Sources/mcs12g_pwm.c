@@ -3,7 +3,50 @@
 Mcs12gPwmDataType gMcs12gPwmData;
 
 /**
- **@brief 
+ **@brief 应用层接口，用于 pwm 初始化 
+/**/
+unsigned char appl_pwm_init(){
+	return mcs12g_pwm_init(&gMcs12gPwmData, &gMcs12gPwmAswCfgData, &gMcs12gPwmBswCfgData);	
+}
+
+/**
+ **@brief 应用层接口，在 task 任务中周期调用更新状态 
+/**/
+unsigned char appl_pwm_update(){
+	return mcs12g_pwm_update(&gMcs12gPwmData);	 	
+}
+
+/**
+ **@brief 应用层接口，设置 pwm 通道使能 
+/**/
+unsigned char appl_pwm_setEnable(unsigned char enable){
+	return mcs12g_pwm_setEnable(&gMcs12gPwmData, enable);	
+}
+
+/**
+ **@brief 应用层接口，设置 pwm 通道 polarity 
+/**/
+unsigned char appl_pwm_setPolarity(unsigned char polarity){
+	return mcs12g_pwm_setPolarity(&gMcs12gPwmData, polarity);	
+}
+
+/**
+ **@brief 应用层接口，设置 pwm 是否中间对齐 
+/**/
+unsigned char appl_pwm_setCenterAligned(unsigned char centerAligned){
+	return mcs12g_pwm_setCenterAligned(&gMcs12gPwmData, centerAligned);	
+}
+
+/**
+ **@brief 应用层接口，设置 pwm 某 channel 的 duty 和 period 
+/**/
+unsigned char appl_pwm_setDutyPeriod(unsigned char channel, unsigned short duty, unsigned short period){
+	return mcs12g_pwm_setDutyPeriod(&gMcs12gPwmData, channel, duty, period);	
+}
+
+
+/**
+ **@brief 底层特定驱动接口，初始化 pwm 模块  
 /**/
 unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswCfgDataType* pAswCfgData, const Mcs12gPwmBswCfgDataType* pBswCfgData){
 	unsigned char i = 0;
@@ -46,7 +89,7 @@ unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswCfgData
 }
 
 /**
- **@brief 
+ **@brief 底层特定驱动接口，用于周期更新 pwm 状态 
 /**/
 unsigned char mcs12g_pwm_update(Mcs12gPwmDataType* this){
 	if( !this ){	
@@ -86,7 +129,7 @@ unsigned char mcs12g_pwm_update(Mcs12gPwmDataType* this){
 }
 
 /**
- **@brief 
+ **@brief 底层特定驱动接口，设置 pwm 通道使能 
 /**/
 unsigned char mcs12g_pwm_setEnable(Mcs12gPwmDataType* this, unsigned char enable){
 	if( !this ){
@@ -98,7 +141,7 @@ unsigned char mcs12g_pwm_setEnable(Mcs12gPwmDataType* this, unsigned char enable
 }
 
 /**
- **@brief 
+ **@brief  底层特定驱动接口, 设置 pwm polarity
 /**/
 unsigned char mcs12g_pwm_setPolarity(Mcs12gPwmDataType* this, unsigned char polarity){
 	if( !this ){
@@ -110,7 +153,7 @@ unsigned char mcs12g_pwm_setPolarity(Mcs12gPwmDataType* this, unsigned char pola
 }
 
 /**
- **@brief 
+ **@brief 底层特定驱动接口，设置 pwm 中间对齐 
 /**/
 unsigned char mcs12g_pwm_setCenterAligned(Mcs12gPwmDataType* this, unsigned char centerAligned){
 	if( !this ){
@@ -122,7 +165,7 @@ unsigned char mcs12g_pwm_setCenterAligned(Mcs12gPwmDataType* this, unsigned char
 }
 
 /**
- **@brief 
+ **@brief 特定驱动接口，设置 pwm 某 channel 的 duty、period 
 /**/
 unsigned char mcs12g_pwm_setDutyPeriod(Mcs12gPwmDataType* this, unsigned char channel, unsigned short duty, unsigned short period){
 	if( !this ){
