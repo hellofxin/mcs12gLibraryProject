@@ -17,21 +17,24 @@ unsigned char appl_pwm_update(){
 }
 
 /**
- **@brief 应用层接口，设置 pwm 通道使能 
+ **@brief 应用层接口，设置 pwm 通道使能
+ **@parameter enable: enable的每一个bit对应一个pwm通道，比如enable.bit0对应pwm channel 0的使能配置 
 /**/
 unsigned char appl_pwm_setEnable(unsigned char enable){
 	return mcs12g_pwm_setEnable(&gMcs12gPwmData, enable);	
 }
 
 /**
- **@brief 应用层接口，设置 pwm 通道 polarity 
+ **@brief 应用层接口，设置 pwm 通道 polarity
+ **@parameter polarity: polarity的每一个bit对应一个pwm通道，比如polarity.bit0对应pwm channel 0的polarity配置
 /**/
 unsigned char appl_pwm_setPolarity(unsigned char polarity){
 	return mcs12g_pwm_setPolarity(&gMcs12gPwmData, polarity);	
 }
 
 /**
- **@brief 应用层接口，设置 pwm 是否中间对齐 
+ **@brief 应用层接口，设置 pwm 是否中间对齐
+ **@parameter centerAligned: centerAligned的每一个bit对应一个pwm通道，比如centerAligned.bit0对应pwm channel 0的centerAligned配置
 /**/
 unsigned char appl_pwm_setCenterAligned(unsigned char centerAligned){
 	return mcs12g_pwm_setCenterAligned(&gMcs12gPwmData, centerAligned);	
@@ -39,6 +42,9 @@ unsigned char appl_pwm_setCenterAligned(unsigned char centerAligned){
 
 /**
  **@brief 应用层接口，设置 pwm 某 channel 的 duty 和 period 
+ **@parameter channel: 某个pwm通道编号，比如1、2、3、4、5、6、7
+ **                      duty: 占空比
+ **                      period: 周期
 /**/
 unsigned char appl_pwm_setDutyPeriod(unsigned char channel, unsigned short duty, unsigned short period){
 	return mcs12g_pwm_setDutyPeriod(&gMcs12gPwmData, channel, duty, period);	
