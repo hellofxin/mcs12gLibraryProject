@@ -2,6 +2,9 @@
 
 Mcs12gPwmDataType gMcs12gPwmData;
 
+/**
+ **@brief 
+/**/
 unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswCfgDataType* pAswCfgData, const Mcs12gPwmBswCfgDataType* pBswCfgData){
 	unsigned char i = 0;
 	if( !this ){
@@ -42,6 +45,9 @@ unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswCfgData
 	return this->mStatus;
 }
 
+/**
+ **@brief 
+/**/
 unsigned char mcs12g_pwm_update(Mcs12gPwmDataType* this){
 	if( !this ){	
 		return ERROR_PWM_NOT_OK;
@@ -77,5 +83,57 @@ unsigned char mcs12g_pwm_update(Mcs12gPwmDataType* this){
 		PWME = this->mEnable;	
 	}		
 	return ERROR_PWM_OK;
+}
+
+/**
+ **@brief 
+/**/
+unsigned char mcs12g_pwm_setEnable(Mcs12gPwmDataType* this, unsigned char enable){
+	if( !this ){
+		return ERROR_PWM_NOT_OK;
+	}
+	this->mEnable = enable;
+	this->mUpdateRequest = 1;
+	return ERROR_PWM_OK;
+}
+
+/**
+ **@brief 
+/**/
+unsigned char mcs12g_pwm_setPolarity(Mcs12gPwmDataType* this, unsigned char polarity){
+	if( !this ){
+		return ERROR_PWM_NOT_OK;
+	}
+	this->mPolarity = polarity;
+	this->mUpdateRequest = 1;
+	return ERROR_PWM_OK;
+}
+
+/**
+ **@brief 
+/**/
+unsigned char mcs12g_pwm_setCenterAligned(Mcs12gPwmDataType* this, unsigned char centerAligned){
+	if( !this ){
+		return ERROR_PWM_NOT_OK;
+	}
+	this->mCenterAligned = centerAligned;
+	this->mUpdateRequest = 1;
+	return ERROR_PWM_OK;
+}
+
+/**
+ **@brief 
+/**/
+unsigned char mcs12g_pwm_setDutyPeriod(Mcs12gPwmDataType* this, unsigned char channel, unsigned short duty, unsigned short period){
+	if( !this ){
+		return ERROR_PWM_NOT_OK;
+	}
+	if( !IS_MCS12G_PWM_CHANNEL_NUMBER(channel) ){
+		return ERROR_PWM_NOT_OK;
+	}
+	this->mDuty[channel] = duty;
+	this->mPeriod[channel] = period;
+	this->mUpdateRequest = 1;
+	return ERROR_PWM_OK;	
 }
 

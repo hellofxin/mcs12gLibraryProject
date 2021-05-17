@@ -2,6 +2,7 @@
 #define MCS12G_PWM_DATATYPE_H
 
 #define MCS12G_PWM_CHANNEL_NUMBER		8
+#define IS_MCS12G_PWM_CHANNEL_NUMBER(p)	( MCS12G_PWM_CHANNEL_NUMBER > ((unsigned char)p) )
 
 typedef struct mcs12gPwmDataType{
 	unsigned char mStatus;
