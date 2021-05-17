@@ -10,7 +10,7 @@ mDuty[MCS12G_PWM_CHANNEL_NUMBER];
 mPeriod[MCS12G_PWM_CHANNEL_NUMBER];    
 **/
 
-const Mcs12gPwmDataType gMcs12gPwmBswCfgData  = {
+const Mcs12gPwmBswCfgDataType gMcs12gPwmBswCfgData  = {
 	0,
 	1,
 	0 | PWME_PWME0_MASK | PWME_PWME1_MASK,

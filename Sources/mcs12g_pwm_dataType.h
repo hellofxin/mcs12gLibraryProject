@@ -19,4 +19,6 @@ typedef struct mcs12gPwmAswCfgDataType{
 	unsigned char mPeriod[MCS12G_PWM_CHANNEL_NUMBER];    
 }Mcs12gPwmAswCfgDataType;
 
+typedef Mcs12gPwmDataType Mcs12gPwmBswCfgDataType;
+
 #endif

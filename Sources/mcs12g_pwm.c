@@ -2,77 +2,39 @@
 
 Mcs12gPwmDataType gMcs12gPwmData;
 
-unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswCfgDataType* pAswCfgData, const Mcs12gPwmDataType* pBswCfgData){
+unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswCfgDataType* pAswCfgData, const Mcs12gPwmBswCfgDataType* pBswCfgData){
+	unsigned char i = 0;
 	if( !this ){
 		return ERROR_PWM_NOT_OK;
-	}
-	if( pAswCfgData ){
-		this->mEnable = pAswCfgData->mEnable;
-		this->mDuty[0] = pAswCfgData->mDuty[0];	
-		this->mDuty[1] = pAswCfgData->mDuty[1];	
-		this->mDuty[2] = pAswCfgData->mDuty[2];	
-		this->mDuty[3] = pAswCfgData->mDuty[3];	
-		this->mDuty[4] = pAswCfgData->mDuty[4];	
-		this->mDuty[5] = pAswCfgData->mDuty[5];	
-		this->mDuty[6] = pAswCfgData->mDuty[6];	
-		this->mDuty[7] = pAswCfgData->mDuty[7];
-		this->mPeriod[0] = pAswCfgData->mPeriod[0];	
-		this->mPeriod[1] = pAswCfgData->mPeriod[1];	
-		this->mPeriod[2] = pAswCfgData->mPeriod[2];	
-		this->mPeriod[3] = pAswCfgData->mPeriod[3];	
-		this->mPeriod[4] = pAswCfgData->mPeriod[4];	
-		this->mPeriod[5] = pAswCfgData->mPeriod[5];	
-		this->mPeriod[6] = pAswCfgData->mPeriod[6];	
-		this->mPeriod[7] = pAswCfgData->mPeriod[7];	
-	}
-	else if( pBswCfgData ){
-		this->mEnable = pBswCfgData->mEnable;
-		this->mDuty[0] = pBswCfgData->mDuty[0];	
-		this->mDuty[1] = pBswCfgData->mDuty[1];	
-		this->mDuty[2] = pBswCfgData->mDuty[2];	
-		this->mDuty[3] = pBswCfgData->mDuty[3];	
-		this->mDuty[4] = pBswCfgData->mDuty[4];	
-		this->mDuty[5] = pBswCfgData->mDuty[5];	
-		this->mDuty[6] = pBswCfgData->mDuty[6];	
-		this->mDuty[7] = pBswCfgData->mDuty[7];
-		this->mPeriod[0] = pBswCfgData->mPeriod[0];	
-		this->mPeriod[1] = pBswCfgData->mPeriod[1];	
-		this->mPeriod[2] = pBswCfgData->mPeriod[2];	
-		this->mPeriod[3] = pBswCfgData->mPeriod[3];	
-		this->mPeriod[4] = pBswCfgData->mPeriod[4];	
-		this->mPeriod[5] = pBswCfgData->mPeriod[5];	
-		this->mPeriod[6] = pBswCfgData->mPeriod[6];	
-		this->mPeriod[7] = pBswCfgData->mPeriod[7];					
-	}
-	else{
-		this->mEnable = 0;
-		this->mDuty[0] = 0;
-		this->mDuty[1] = 0;
-		this->mDuty[2] = 0;
-		this->mDuty[3] = 0;
-		this->mDuty[4] = 0;
-		this->mDuty[5] = 0;
-		this->mDuty[6] = 0;	
-		this->mDuty[7] = 0;
-		this->mPeriod[0] = 0;
-		this->mPeriod[1] = 0;
-		this->mPeriod[2] = 0;
-		this->mPeriod[3] = 0;
-		this->mPeriod[4] = 0;
-		this->mPeriod[5] = 0;
-		this->mPeriod[6] = 0;
-		this->mPeriod[7] = 0;
+	}	
+	this->mStatus = 0;
+	this->mUpdateRequest = 1;
+	this->mEnable = 0;
+	this->mPolarity = 0;
+	this->mCenterAligned = 0;
+	for( i=0; i<MCS12G_PWM_CHANNEL_NUMBER; i++ ){
+		this->mDuty[i] = 0;
+		this->mPeriod[i] = 0;
 	}
 	
 	if( pBswCfgData ){
+		this->mEnable = pBswCfgData->mEnable;
 		this->mPolarity = pBswCfgData->mPolarity;
 		this->mCenterAligned = pBswCfgData->mCenterAligned;		
+		for( i=0; i<MCS12G_PWM_CHANNEL_NUMBER; i++ ){
+			this->mDuty[i] = pBswCfgData->mDuty[i];
+			this->mPeriod[i] = pBswCfgData->mPeriod[i];
+		}
 	}
-	else{
-		this->mPolarity = 0;
-		this->mCenterAligned = 0;	
+	
+	if( pAswCfgData ){
+		this->mEnable = pAswCfgData->mEnable;
+		for( i=0; i<MCS12G_PWM_CHANNEL_NUMBER; i++ ){
+			this->mDuty[i] = pAswCfgData->mDuty[i];
+			this->mPeriod[i] = pAswCfgData->mPeriod[i];
+		}
 	}
-		
+	
 	this->mStatus = 0;
         this->mUpdateRequest = 1;
 	this->mStatus = mcs12g_pwm_update(this);     
