@@ -12,7 +12,7 @@ unsigned int gSystemCounter;
 void main(void) {
 	clock_init();
 	timer_init();
- 	mcs12g_pwm_init(&gMcs12gPwmData, &gMcs12gPwmAswCfgData, &gMcs12gPwmBswCfgData);
+ 	mcs12g_pwm_init(&gMcs12gPwmData, &gMcs12gPwmAswConfigData, &gMcs12gPwmBswConfigData);
 	EnableInterrupts;
 	
 	for(;;) {

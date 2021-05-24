@@ -14,12 +14,12 @@ typedef struct mcs12gPwmDataType{
 	unsigned char mPeriod[MCS12G_PWM_CHANNEL_NUMBER];    
 }Mcs12gPwmDataType;
 
-typedef struct mcs12gPwmAswCfgDataType{
+typedef struct mcs12gPwmAswConfigDataType{
 	unsigned char mEnable;
 	unsigned char mDuty[MCS12G_PWM_CHANNEL_NUMBER];
 	unsigned char mPeriod[MCS12G_PWM_CHANNEL_NUMBER];    
-}Mcs12gPwmAswCfgDataType;
+}Mcs12gPwmAswConfigDataType;
 
-typedef Mcs12gPwmDataType Mcs12gPwmBswCfgDataType;
+typedef Mcs12gPwmDataType Mcs12gPwmBswConfigDataType;
 
 #endif

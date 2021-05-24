@@ -6,7 +6,7 @@ Mcs12gPwmDataType gMcs12gPwmData;
  **@brief 应用层接口，用于 pwm 初始化 
 /**/
 unsigned char appl_pwm_init(){
-	return mcs12g_pwm_init(&gMcs12gPwmData, &gMcs12gPwmAswCfgData, &gMcs12gPwmBswCfgData);	
+	return mcs12g_pwm_init(&gMcs12gPwmData, &gMcs12gPwmAswConfigData, &gMcs12gPwmBswConfigData);	
 }
 
 /**
@@ -54,7 +54,7 @@ unsigned char appl_pwm_setDutyPeriod(unsigned char channel, unsigned short duty,
 /**
  **@brief 底层特定驱动接口，初始化 pwm 模块  
 /**/
-unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswCfgDataType* pAswCfgData, const Mcs12gPwmBswCfgDataType* pBswCfgData){
+unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswConfigDataType* pAswCfgData, const Mcs12gPwmBswConfigDataType* pBswCfgData){
 	unsigned char i = 0;
 	if( !this ){
 		return ERROR_PWM_NOT_OK;

@@ -10,7 +10,7 @@
 extern Mcs12gPwmDataType gMcs12gPwmData;
 
 
-unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswCfgDataType* pAswCfgData, const Mcs12gPwmBswCfgDataType* pBswCfgData);
+unsigned char mcs12g_pwm_init(Mcs12gPwmDataType* this, const Mcs12gPwmAswConfigDataType* pAswCfgData, const Mcs12gPwmBswConfigDataType* pBswCfgData);
 unsigned char mcs12g_pwm_update(Mcs12gPwmDataType* this);
 
 unsigned char mcs12g_pwm_setEnable(Mcs12gPwmDataType* this, unsigned char enable);

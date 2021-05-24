@@ -7,7 +7,7 @@
 #define ERROR_PWM_OK			0
 #define ERROR_PWM_NOT_OK		1
 
-extern const Mcs12gPwmBswCfgDataType gMcs12gPwmBswCfgData;
+extern const Mcs12gPwmBswConfigDataType gMcs12gPwmBswConfigData;
 
 unsigned char mcs12g_pwm_postInit(Mcs12gPwmDataType* this);
 

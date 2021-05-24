@@ -4,6 +4,6 @@
 #include "mc9s12g128.h"
 #include "mcs12g_pwm_dataType.h"
 
-extern const Mcs12gPwmAswCfgDataType gMcs12gPwmAswCfgData;
+extern const Mcs12gPwmAswConfigDataType gMcs12gPwmAswConfigData;
 
 #endif
