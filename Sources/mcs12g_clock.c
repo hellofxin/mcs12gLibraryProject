@@ -30,14 +30,14 @@ If PLL is selected (PLLSEL=1) 			Fbus = Fpll/2
 
 /**
 mStatus;	
-mOscillatorEnable;
+mOscillatorFrequency;
+mPLLFrequency;
+mBusFrequency;
 mReferenceFrequency;
 mREFDIV;
 mVCOFrequency;
 mSYNDIV;
 mPOSTDIV;
-mPLLFrequency;
-mBusFrequency;	
 /**/
 
 unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, Mcs12gClockConfigDataType* pConfigData){
@@ -47,42 +47,34 @@ unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, Mcs12gClockConfigData
 		return  ERROR_NOT_OK;
 	}
 	this->mStatus = 0;
-	this->mOscillatorEnable = 1;
+	this->mOscillatorFrequency = OscillatorFrequency_8MHZ;
+	this->mPLLFrequency = 48000000;
+	this->mBusFrequency = 24000000;
 	this->mReferenceFrequency = ReferenceFrequency_1MHZ_2MHZ;
 	this->mREFDIV = 0;
 	this->mVCOFrequency = VCOFrequency_32MHZ_48MHZ;
 	this->mSYNDIV = 23;
 	this->mPOSTDIV = 0;
-	this->mPLLFrequency = 48000000;
-	this->mBusFrequency = 24000000;
 	
 	if( pConfigData ){
-		this->mOscillatorEnable = pConfigData->mOscillatorEnable;
+		this->mOscillatorFrequency = pConfigData->mOscillatorFrequency;
+		this->mPLLFrequency = pConfigData->mPLLFrequency;
+		this->mBusFrequency = pConfigData->mBusFrequency;
 		this->mReferenceFrequency = pConfigData->mReferenceFrequency;
 		this->mREFDIV = pConfigData->mREFDIV;
 		this->mVCOFrequency = pConfigData->mVCOFrequency;
 		this->mSYNDIV = pConfigData->mSYNDIV;
 		this->mPOSTDIV = pConfigData->mPOSTDIV;
-		this->mPLLFrequency = pConfigData->mPLLFrequency;
-		this->mBusFrequency = pConfigData->mBusFrequency;
 	}	
 	
 	CPMUPROT_PROT = 0x26;
 	CPMUOSC_OSCE = 0;
+	CPMUCLKS_PLLSEL = 1;	
 	CPMUREFDIV_REFFRQ = this->mReferenceFrequency;
 	CPMUREFDIV_REFDIV = this->mREFDIV;
 	CPMUSYNR_VCOFRQ = this->mVCOFrequency;
 	CPMUSYNR_SYNDIV - this->mSYNDIV;
 	CPMUPOSTDIV_POSTDIV = this->mPOSTDIV;
-	CPMUCLKS_PLLSEL = 1;	
-	timeoutCounter = 0;
-	while( !CPMUCLKS_PLLSEL &&  timeoutCounter<timeoutCounterMax ){
-		timeoutCounter++;		
-	}
-	if( timeoutCounter>=timeoutCounterMax ){
-		// timeout callback	
-		this->mStatus = ERROR_NOT_OK;
-	}
 	CPMUOSC_OSCE = 1;
 	timeoutCounter = 0;
 	while( (!CPMUFLG_LOCK || !CPMUFLG_UPOSC) &&  timeoutCounter<timeoutCounterMax){

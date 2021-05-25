@@ -30,24 +30,24 @@ If PLL is selected (PLLSEL=1) 			Fbus = Fpll/2
 
 /**
 mStatus;	
-mOscillatorEnable;
+mOscillatorFrequency;
+mPLLFrequency;
+mBusFrequency;
 mReferenceFrequency;
 mREFDIV;
 mVCOFrequency;
 mSYNDIV;
 mPOSTDIV;
-mPLLFrequency;
-mBusFrequency;	
 /**/
 
 const Mcs12gClockConfigDataType gMcs12gClockConfigData = {
 	0,
-	1,
+	OscillatorFrequency_8MHZ,
+	48000000,
+	24000000,
 	ReferenceFrequency_default,
 	0,
 	VCOFrequency_default,
 	2,
-	0,
-	48000000,
-	24000000	
+	0,	
 };

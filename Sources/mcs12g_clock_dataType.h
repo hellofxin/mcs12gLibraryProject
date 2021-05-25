@@ -29,6 +29,11 @@ If PLL is not locked (LOCK=0) 			fPLL = Fvco/4
 If PLL is selected (PLLSEL=1) 			Fbus = Fpll/2
 /**/
 
+
+#define OscillatorFrequency_4MHZ 		4000000
+#define OscillatorFrequency_8MHZ		8000000
+#define OscillatorFrequency_20MHZ		20000000		
+
 typedef enum referenceFrequencyRangeDataType{
 	ReferenceFrequency_1MHZ_2MHZ = 0,
 	ReferenceFrequency_2MHZ_6MHZ = 1,
@@ -45,14 +50,14 @@ typedef enum vcoFrequencyRangeDataType{
 
 typedef struct mcs12gClockDataType{
 	unsigned char mStatus;	
-	unsigned char mOscillatorEnable;
+	unsigned long mOscillatorFrequency;
+	unsigned long mPLLFrequency;
+	unsigned long mBusFrequency;
 	unsigned char mReferenceFrequency;
 	unsigned char mREFDIV;
 	unsigned char mVCOFrequency;
 	unsigned char mSYNDIV;
-	unsigned char mPOSTDIV;
-	unsigned long mPLLFrequency;
-	unsigned long mBusFrequency;	
+	unsigned char mPOSTDIV;	
 }Mcs12gClockDataType;
 
 typedef Mcs12gClockDataType Mcs12gClockConfigDataType;
