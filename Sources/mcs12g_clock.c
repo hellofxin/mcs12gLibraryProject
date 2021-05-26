@@ -40,7 +40,13 @@ mSYNDIV;
 mPOSTDIV;
 /**/
 
-unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, Mcs12gClockConfigDataType* pConfigData){
+Mcs12gClockDataType gMcs12gClockData;
+
+unsigned char appl_clock_init(){
+	return mcs12g_clock_init(&gMcs12gClockData, &gMcs12gClockConfigData);	
+}
+
+unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, const Mcs12gClockConfigDataType* pConfigData){
 	static unsigned long timeoutCounter = 0;
 	unsigned long timeoutCounterMax = 60000;
 	if( !this ){
@@ -67,13 +73,13 @@ unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, Mcs12gClockConfigData
 		this->mPOSTDIV = pConfigData->mPOSTDIV;
 	}	
 	
-	CPMUPROT_PROT = 0x26;
+	CPMUPROT = 0x26;
 	CPMUOSC_OSCE = 0;
 	CPMUCLKS_PLLSEL = 1;	
 	CPMUREFDIV_REFFRQ = this->mReferenceFrequency;
 	CPMUREFDIV_REFDIV = this->mREFDIV;
 	CPMUSYNR_VCOFRQ = this->mVCOFrequency;
-	CPMUSYNR_SYNDIV - this->mSYNDIV;
+	CPMUSYNR_SYNDIV = this->mSYNDIV;
 	CPMUPOSTDIV_POSTDIV = this->mPOSTDIV;
 	CPMUOSC_OSCE = 1;
 	timeoutCounter = 0;
@@ -85,5 +91,7 @@ unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, Mcs12gClockConfigData
 		this->mStatus = ERROR_NOT_OK;
 	}	
 	CPMUPROT = 0;
+	this->mPLLFrequency = pConfigData->mOscillatorFrequency/(this->mREFDIV+1)*2*(this->mSYNDIV+1)/(this->mPOSTDIV+1);
+	this->mBusFrequency = this->mPLLFrequency/2;
 	return ERROR_OK;	
 }

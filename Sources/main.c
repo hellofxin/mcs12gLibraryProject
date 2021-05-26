@@ -3,16 +3,19 @@
 
 
 #include "mcs12g_pwm.h"
-#include "clock.h"
+#include "mcs12g_adc.h"
+#include "mcs12g_clock.h"
+
 #include "timer_G96.h"
 #include "schedule.h"
 
 unsigned int gSystemCounter;
 
 void main(void) {
-	clock_init();
+	appl_clock_init();
 	timer_init();
- 	mcs12g_pwm_init(&gMcs12gPwmData, &gMcs12gPwmAswConfigData, &gMcs12gPwmBswConfigData);
+	appl_adc_init();
+ 	appl_pwm_init();
 	EnableInterrupts;
 	
 	for(;;) {
@@ -29,7 +32,8 @@ void task_5ms(){
 }
 void task_10ms(){
 	watchDog_feed();
-	mcs12g_pwm_update(&gMcs12gPwmData);	
+	appl_pwm_update();
+	appl_adc_update();
 }
 void task_20ms(){
 	

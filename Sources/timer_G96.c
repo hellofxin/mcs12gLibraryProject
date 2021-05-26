@@ -25,7 +25,7 @@ void timer_init(){
 	TSCR1_TEN = 0; 		//disable timer;
 	TSCR1_TSWAI = 1;
 	TSCR1_TSFRZ = 1;
-	PTPSR = 15;  			//set prescaler of precision timer;
+	PTPSR = 23;  			//set prescaler of precision timer;
 	TIOS_IOS7 = 1;		//set ch7 output compared;
 	TC7 = 1000;	     		//set output compare value of ch7;
 	TCTL1_OM7 = 0;	   	//set output compare mode of ch7;
