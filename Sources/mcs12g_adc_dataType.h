@@ -34,5 +34,8 @@ typedef struct mcs12gAdcBswConfigDataType{
 }Mcs12gAdcBswConfigDataType;
 
 
+#define IS_MCS12G_ADC_RESOLUTION_DATA_TYPE(p)		( 	Mcs12gAdcResolution_8bit==(p)		\
+														|| Mcs12gAdcResolution_10bit==(p)	\
+													)
 
 #endif

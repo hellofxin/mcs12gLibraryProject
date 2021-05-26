@@ -32,7 +32,12 @@ If PLL is selected (PLLSEL=1) 			Fbus = Fpll/2
 
 #define OscillatorFrequency_4MHZ 		4000000
 #define OscillatorFrequency_8MHZ		8000000
-#define OscillatorFrequency_20MHZ		20000000		
+#define OscillatorFrequency_20MHZ		20000000	
+
+#define IS_OSCILLATOR_FREQUENCY(p)	( 	OscillatorFrequency_4MHZ==(p)		\
+										|| OscillatorFrequency_8MHZ==(p)	\
+										|| OscillatorFrequency_20MHZ==(p)	\
+									)	
 
 typedef enum referenceFrequencyRangeDataType{
 	ReferenceFrequency_1MHZ_2MHZ = 0,
@@ -61,5 +66,15 @@ typedef struct mcs12gClockDataType{
 }Mcs12gClockDataType;
 
 typedef Mcs12gClockDataType Mcs12gClockConfigDataType;
+
+#define IS_REFERENCE_FREQUENCY_DATA_TYPE(p)		(	ReferenceFrequency_1MHZ_2MHZ==(p)			\
+													|| ReferenceFrequency_2MHZ_6MHZ==(p)			\
+													|| ReferenceFrequency_6MHZ_12MHZ==(p)		\
+													|| ReferenceFrequency_12MHZ_andAbove==(p)		\
+												)	
+												
+#define IS_VCO_FREQUENCY_DATA_TYPE(p)			(	VCOFrequency_32MHZ_48MHZ==(p)				\
+													|| VCOFrequency_48MHZ_50MHZ==(p)			\
+												)														
 
 #endif

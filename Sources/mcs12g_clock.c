@@ -63,14 +63,19 @@ unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, const Mcs12gClockConf
 	this->mPOSTDIV = 0;
 	
 	if( pConfigData ){
-		this->mOscillatorFrequency = pConfigData->mOscillatorFrequency;
-		this->mPLLFrequency = pConfigData->mPLLFrequency;
-		this->mBusFrequency = pConfigData->mBusFrequency;
-		this->mReferenceFrequency = pConfigData->mReferenceFrequency;
-		this->mREFDIV = pConfigData->mREFDIV;
-		this->mVCOFrequency = pConfigData->mVCOFrequency;
-		this->mSYNDIV = pConfigData->mSYNDIV;
-		this->mPOSTDIV = pConfigData->mPOSTDIV;
+		if( 	IS_OSCILLATOR_FREQUENCY( this->mOscillatorFrequency ) 
+			&& IS_REFERENCE_FREQUENCY_DATA_TYPE( this->mReferenceFrequency )
+			&& IS_VCO_FREQUENCY_DATA_TYPE( this->mVCOFrequency )
+		){
+			this->mOscillatorFrequency = pConfigData->mOscillatorFrequency;
+			this->mPLLFrequency = pConfigData->mPLLFrequency;
+			this->mBusFrequency = pConfigData->mBusFrequency;
+			this->mReferenceFrequency = pConfigData->mReferenceFrequency;
+			this->mREFDIV = pConfigData->mREFDIV;
+			this->mVCOFrequency = pConfigData->mVCOFrequency;
+			this->mSYNDIV = pConfigData->mSYNDIV;
+			this->mPOSTDIV = pConfigData->mPOSTDIV;		
+		}
 	}	
 	
 	CPMUPROT = 0x26;

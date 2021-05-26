@@ -40,8 +40,10 @@ unsigned char mcs12g_adc_init(Mcs12gAdcDataType* this, const Mcs12gAdcBswConfigD
 		this->mData[i] = 0;
 	}
 	
-	if( pConfigData ){
-		this->mResolution = pConfigData->mResolution;;
+	if( pConfigData ){		
+		if( IS_MCS12G_ADC_RESOLUTION_DATA_TYPE(this->mResolution) ){
+			this->mResolution = pConfigData->mResolution;
+		}
 		this->mConversionSequenceLength = pConfigData->mConversionSequenceLength;
 		this->mWrap = pConfigData->mWrap;
 		this->mMulti = pConfigData->mMulti;
