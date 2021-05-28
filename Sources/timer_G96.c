@@ -36,6 +36,7 @@ void timer_init(){
 	TSCR1_TEN = 1;		//timer enabled£»		
 }
 
+/**
 #pragma CODE_SEG NON_BANKED
 interrupt VectorNumber_Vtimch7 void ISR_timCh7(){
 	TFLG1_C7F = 1;
@@ -65,6 +66,7 @@ interrupt VectorNumber_Vtimch7 void ISR_timCh7(){
         }
 }
 #pragma CODE_SEG DEFAULT
+/**/
 
 unsigned long timer_getCounter(){
 	return TCNT;
