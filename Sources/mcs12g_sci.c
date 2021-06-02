@@ -54,7 +54,7 @@ unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigD
 	}
 	
 	this->mUpdateRequest = 1;
-	mcs12g_sci_applyCOnfig(this);	
+	mcs12g_sci_applyConfig(this);	
 	return ERROR_OK;	
 }
 unsigned char mcs12g_sci_update(Mcs12gSciDataType* this){

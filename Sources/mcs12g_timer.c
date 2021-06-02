@@ -67,7 +67,10 @@ unsigned char mcs12g_timer_init(Mcs12gTimerDataType* this, const Mcs12gTimerBswC
 		this->mTimerCounterResetEnable = pBswConfigData->mTimerCounterResetEnable;
 		this->mTimerOverflowInterruptEnable = pBswConfigData->mTimerOverflowInterruptEnable;
 		this->mOutputComparePinDisconnect = pBswConfigData->mOutputComparePinDisconnect;
-		this->mPrecisionTimerPrescaler = pBswConfigData->mPrecisionTimerPrescaler;			
+		this->mPrecisionTimerPrescaler = pBswConfigData->mPrecisionTimerPrescaler;		
+		for( i=0; i<MCS12G_TIMER_CHANNEL_NUMBER; i++ ){
+			this->mTimerChannelCounter[i] = pBswConfigData->mTimerChannelCounter[i];	
+		}	
 	}
 	
 	this->mUpdateRequest = 1;
@@ -91,12 +94,13 @@ unsigned char mcs12g_timer_applyConfig(Mcs12gTimerDataType* this){
 		return ERROR_NOT_OK;
 	}
 	this->mUpdateRequest = 0;
+	TSCR1_PRNT = 1;	
 	TSCR1_TEN = 0; 
 	TIOS = this->mInputCaptureOutputCompareSelect;
 	CFORC = this->mFourceOutput;
 	OC7M = this->mOutputCompareMask;
 	OC7D = this->mOutputCompareData;
-	TSCR1_TFFCA = 1;
+	TSCR1_TFFCA = 0;
 	TSCR1_TSFRZ = 1;
 	TSCR1_TSWAI = 1;
 	TCTL2 = this->mOutputCompareModeLevelLow;

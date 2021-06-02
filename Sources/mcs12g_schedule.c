@@ -29,6 +29,7 @@ unsigned char mcs12g_schedule_init(Mcs12gScheduleDataType* this, TaskDataType* t
 	this->mTaskNumber = taskNumber;
 	this->mTaskPointer = taskPointer;
 	for( i=0; i<this->mTaskNumber; i++ ){
+		this->mTaskPointer[i].mTaskFlag = 0;
 		this->mTaskPointer[i].mTaskExecutionCounter = 0;
 	}
 	return ERROR_OK;

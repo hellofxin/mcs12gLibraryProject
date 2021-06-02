@@ -22,7 +22,7 @@ mPrecisionTimerPrescaler;
 const Mcs12gTimerBswConfigDataType gMcs12gTimerBswConfigData = {
 	0,
 	1,
-	0xFF,
+	0x80,
 	0,
 	0,
 	0,
@@ -30,7 +30,7 @@ const Mcs12gTimerBswConfigDataType gMcs12gTimerBswConfigData = {
 	0x55,
 	0xFF,
 	0xFF,
-	0xFF,
+	0x80,
 	1,
 	0, 
 	{ 1000, 1000, 1000, 1000, 	1000, 1000, 1000, 1000 },
