@@ -25,7 +25,6 @@ mTCIE;
 /**/
 
 unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigDataType* pBswConfigData){
-	unsigned char i = 0;
 	if( !this ){
 		return ERROR_NOT_OK;
 	}
@@ -58,10 +57,8 @@ unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigD
 	
 	this->mUpdateRequest = 1;
 	mcs12g_sci_applyConfig(this);
+	mcs12g_sci_postInit(this);
 	
-	for( i=0; i<22; i++ ){
-		gSciDataBuffer[i] = i;			
-	}
 	return ERROR_OK;	
 }
 unsigned char mcs12g_sci_update(Mcs12gSciDataType* this){
@@ -125,3 +122,10 @@ interrupt VectorNumber_Vsci0 void ISR_sci0(){
 	}
 }
 #pragma CODE_SEG DEFAULT
+
+unsigned char mcs12g_sci_postInit(Mcs12gSciDataType* this){
+	unsigned char i = 0;
+	for( i=0; i<22; i++ ){
+		gSciDataBuffer[i] = i;			
+	}	
+}

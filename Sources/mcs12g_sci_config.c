@@ -15,7 +15,7 @@ const Mcs12gSciBswConfigDataType gMcs12gSciBswConfigData = {
 	1,
 	156,
 	Mcs12gSciParity_even,
-	1,
+	0,
 	Mcs12gSciDataMode_8bit,
 	1,
 	1,

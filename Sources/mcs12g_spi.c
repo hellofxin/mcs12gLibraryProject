@@ -86,7 +86,7 @@ unsigned char mcs12g_spi_update(Mcs12gSpiDataType* this){
 		for( this->mTxDataIndex=0; this->mTxDataIndex<this->mTxDataLength; this->mTxDataIndex++ ){
 			while( 0==SPI1SR_SPTEF );
 			this->mTxCounter++;
-			 data = *( this->mTxDataPointer + this->mTxDataIndex );	
+			 data = *this->mTxDataPointerCurrent++;
 			 data |= 0xE001;
 			 SPI1DR = data;	
 		}
