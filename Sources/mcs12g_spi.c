@@ -1,5 +1,7 @@
 #include "mcs12g_spi.h"
 
+unsigned short gSpiDataBuffer[22];
+
 Mcs12gSpiDataType gMcs12gSpiData;
 
 unsigned char appl_spi_init(){
@@ -34,14 +36,16 @@ unsigned char mcs12g_spi_init(Mcs12gSpiDataType* this, const Mcs12gSpiBswConfigD
 	this->mLeastSignificantBitFirstEnable = 0;
 	this->mSlaveSelectOutputEnable = 1;
 	this->mClockPolarity = 0;
-	this->mClockPhase = 0;
+	this->mClockPhase = 1;
 	this->mTransmitEmptyInterruptEnable = 0;
 	this->mDataReceivedInterruptEnable = 1;
 	this->mDataWidth = Mcs12gSpiDataWidth_8bit;
 	this->mSPR = 2;
 	this->mSPPR = 2;
-	this->mTxRequest = 0;
-	this->mTxData = 0;
+	this->mTxDataPointer = 0;
+	this->mTxDataPointerCurrent = 0;
+	this->mTxDataLength = 0;
+	this->mTxDataIndex = 0;
 	this->mRxData = 0;
 	this->mTxCounter = 0;
 	this->mRxCounter = 0;
@@ -63,10 +67,13 @@ unsigned char mcs12g_spi_init(Mcs12gSpiDataType* this, const Mcs12gSpiBswConfigD
 	
 	this->mUpdateRequest = 1;
 	this ->mStatus = mcs12g_spi_applyConfig(this);
+	mcs12g_spi_postInit(this);
+
 	return ERROR_OK;	
 }
 
 unsigned char mcs12g_spi_update(Mcs12gSpiDataType* this){
+	unsigned short data;
 	if( !this ){
 		return ERROR_NOT_OK;
 	}
@@ -74,10 +81,17 @@ unsigned char mcs12g_spi_update(Mcs12gSpiDataType* this){
 		this->mUpdateRequest = 0;
 		mcs12g_spi_applyConfig(this);
 	}
-	if( 1==this->mTxRequest && 1==SPI0SR_SPTEF ){
-		this->mTxRequest = 0;
-		this->mTxCounter++;
-		SPI0DR = this->mTxData;		
+	if( this->mTxDataLength ){
+		this->mTxDataPointerCurrent = this->mTxDataPointer;
+		for( this->mTxDataIndex=0; this->mTxDataIndex<this->mTxDataLength; this->mTxDataIndex++ ){
+			while( 0==SPI1SR_SPTEF );
+			this->mTxCounter++;
+			 data = *( this->mTxDataPointer + this->mTxDataIndex );	
+			 data |= 0xE001;
+			 SPI1DR = data;	
+		}
+		this->mTxDataLength = 0;
+		//this->mTxDataPointer = 0;
 	}
 	return ERROR_OK;
 }
@@ -87,30 +101,42 @@ unsigned char mcs12g_spi_applyConfig(Mcs12gSpiDataType* this){
 		return ERROR_NOT_OK;
 	}
 	this->mUpdateRequest = 0;
-	SPI0CR1_SPE = 0;
-	SPI0CR1_LSBFE = this->mLeastSignificantBitFirstEnable;
-	SPI0CR1_SSOE = this->mSlaveSelectOutputEnable;
-	SPI0CR1_CPHA = this->mClockPhase;
-	SPI0CR1_CPOL = this->mClockPolarity;
-	SPI0CR1_MSTR = this->mMasterEnable;
-	SPI0CR1_SPTIE = this->mTransmitEmptyInterruptEnable;
-	SPI0CR1_SPIE = 1;
-	SPI0CR2_SPC0 = 0;
-	SPI0CR2_SPISWAI = 1;
-	SPI0CR2_MODFEN = 1;
-	SPI0CR2_XFRW = this->mDataWidth;
-	SPI0BR_SPR = this->mSPR;
-	SPI0BR_SPPR = this->mSPPR;
-	SPI0CR1_SPE = 1;		
+	SPI1CR1_SPE = 0;
+	SPI1CR1_LSBFE = this->mLeastSignificantBitFirstEnable;
+	SPI1CR1_SSOE = this->mSlaveSelectOutputEnable;
+	SPI1CR1_CPHA = this->mClockPhase;
+	SPI1CR1_CPOL = this->mClockPolarity;
+	SPI1CR1_MSTR = this->mMasterEnable;
+	SPI1CR1_SPTIE = this->mTransmitEmptyInterruptEnable;
+	SPI1CR1_SPIE = 1;
+	SPI1CR2_SPC0 = 0;
+	SPI1CR2_SPISWAI = 1;
+	SPI1CR2_MODFEN = 1;
+	SPI1CR2_XFRW = this->mDataWidth;
+	SPI1BR_SPR = this->mSPR;
+	SPI1BR_SPPR = this->mSPPR;
+	SPI1CR1_SPE = 1;		
 	return ERROR_OK;	
 }
 
+/**/
 #pragma CODE_SEG NON_BANKED
-interrupt VectorNumber_Vspi0 void ISR_spi0(){
-	if( SPI0SR_SPIF ){
-		gMcs12gSpiData.mRxData = SPI0DR;	
+interrupt VectorNumber_Vspi1 void ISR_spi1(){
+	if( SPI1SR_SPIF ){
+		gMcs12gSpiData.mRxData = SPI1DR;	
 		gMcs12gSpiData.mRxCounter++;
-		SPI0SR_SPIF = 1;	
+		SPI1SR_SPIF = 1;	
 	}
 }
 #pragma CODE_SEG DEFAULT
+/**/
+
+unsigned char mcs12g_spi_postInit(Mcs12gSpiDataType* this){
+	unsigned char i = 0;	
+	for( i=0; i<22; i++ ){
+		gSpiDataBuffer[i] = i;
+	}
+	this->mTxDataPointer = &gSpiDataBuffer[0];
+	DDRT_DDRT7 = 1;
+	PTT_PTT7 = 1;	
+}

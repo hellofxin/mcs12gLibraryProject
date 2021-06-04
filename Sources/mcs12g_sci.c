@@ -2,6 +2,8 @@
 
 Mcs12gSciDataType gMcs12gSciData;
 
+unsigned char gSciDataBuffer[22];
+
 unsigned char appl_sci_init(){
 	return mcs12g_sci_init(&gMcs12gSciData, &gMcs12gSciBswConfigData);	
 }
@@ -23,6 +25,7 @@ mTCIE;
 /**/
 
 unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigDataType* pBswConfigData){
+	unsigned char i = 0;
 	if( !this ){
 		return ERROR_NOT_OK;
 	}
@@ -36,7 +39,7 @@ unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigD
 	this->mRIE = 1;
 	this->mTIE = 0;
 	this->mTCIE = 0;
-	this->mTxDataPointer = 0;
+	this->mTxDataPointer = &gSciDataBuffer[0];
 	this->mTxDataLength = 0;
 	this->mRxData = 0;
 	this->mRxCounter = 0;
@@ -54,7 +57,11 @@ unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigD
 	}
 	
 	this->mUpdateRequest = 1;
-	mcs12g_sci_applyConfig(this);	
+	mcs12g_sci_applyConfig(this);
+	
+	for( i=0; i<22; i++ ){
+		gSciDataBuffer[i] = i;			
+	}
 	return ERROR_OK;	
 }
 unsigned char mcs12g_sci_update(Mcs12gSciDataType* this){
@@ -66,12 +73,14 @@ unsigned char mcs12g_sci_update(Mcs12gSciDataType* this){
 		mcs12g_sci_applyConfig(this);	
 	}
 	if( this->mTxDataLength ){
+		this->mTxDataPointerCurrent = this->mTxDataPointer;
 		for( this->mTxDataIndex = 0; this->mTxDataIndex<this->mTxDataLength; this->mTxDataIndex++ ){
 			while( 0==SCI0SR1_TDRE );
-			SCI0DRL = *(this->mTxDataPointer+this->mTxDataIndex);	
+			SCI0DRL = *this->mTxDataPointerCurrent++; 
+			this->mTxCounter++;
 		}
 		this->mTxDataLength = 0;
-		this->mTxDataPointer = 0;
+		//this->mTxDataPointer = 0;
 	}
 	return ERROR_OK;
 }
@@ -111,6 +120,7 @@ unsigned char mcs12g_sci_applyConfig(Mcs12gSciDataType* this){
 interrupt VectorNumber_Vsci0 void ISR_sci0(){
 	if( SCI0SR1_RDRF ){
 		gMcs12gSciData.mRxData = SCI0DRL;	
+		gMcs12gSciData.mRxCounter++;
 		SCI0SR1_RDRF = 1;		
 	}
 }

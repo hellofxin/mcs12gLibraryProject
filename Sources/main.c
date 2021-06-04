@@ -17,10 +17,10 @@ void main(void) {
 	appl_clock_init();
 	appl_timer_init();
 	appl_schedule_init();
-	//appl_adc_init();
-	//appl_pwm_init();
-	//appl_sci_init();
-	//appl_spi_init();
+	appl_adc_init();
+	appl_pwm_init();
+	appl_sci_init();
+	appl_spi_init();	
 	
 	EnableInterrupts;
 	
@@ -39,10 +39,11 @@ void task_5ms(){
 void task_10ms(){
 	watchDog_feed();
 	appl_timer_update();
-	//appl_pwm_update();
-	//appl_adc_update();
-	//appl_sci_update();
-	//appl_spi_update();
+	appl_adc_update();
+	appl_pwm_update();	
+	appl_sci_update();
+	appl_spi_update();
+	
 }
 void task_20ms(){
 	

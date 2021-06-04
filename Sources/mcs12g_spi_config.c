@@ -18,13 +18,13 @@ mSPPR;
 const Mcs12gSpiBswConfigDataType gMcs12gSpiBswConfigData = {
 	1,
 	1,
+	1,
+	1,
 	0,
 	1,
 	0,
-	0,
-	0,
 	1,
-	Mcs12gSpiDataWidth_8bit,
+	Mcs12gSpiDataWidth_16bit,
 	2,
 	2	
 };
