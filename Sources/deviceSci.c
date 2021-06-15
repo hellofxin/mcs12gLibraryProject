@@ -16,7 +16,7 @@ char deviceSci_open(const char* path, unsigned char flag){
 }
 
 char deviceSci_read(unsigned char fd, void* buffer, unsigned char count){
-	*buffer = gMcs12gSciData.mRxData;
+	*(unsigned char*)buffer = gMcs12gSciData.mRxData;
 }
 
 char deviceSci_write(unsigned char fd, void* buffer, unsigned char count){

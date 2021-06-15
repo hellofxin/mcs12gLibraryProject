@@ -93,7 +93,7 @@ unsigned char mcs12g_adc_applyConfig(Mcs12gAdcDataType* this){
 	ATDCTL1_SMP_DIS = 1;
 	ATDCTL1_SRES = this->mResolution;
 	ATDCTL2_ASCIE = this->mSequenceCompleteInterruptEnable;
-	ATDCTL2_AFFC = 1;
+	ATDCTL2_AFFC = 0;
 	ATDCTL3_FRZ = 2;
 	ATDCTL3_FIFO = 0;
 	ATDCTL3_S8C = (this->mConversionSequenceLength&8)>0? 1:0;
