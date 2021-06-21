@@ -21,7 +21,7 @@ void main(void) {
 	appl_schedule_init();
 	/**/
 	appl_adc_init();
-	/**
+	/**/
 	appl_pwm_init();
 	/**/
 	appl_sci_init();
@@ -50,7 +50,7 @@ void task_10ms(){
 	appl_timer_update();
 	/**/
 	appl_adc_update();
-	/**
+	/**/
 	appl_pwm_update();
 	/**/	
 	appl_sci_update();
@@ -76,4 +76,5 @@ void task_200ms(){
 void task_1000ms(){
 	gSciDataBuffer[8] = gMcs12gSciData.mTxCounter;	
 	mcs12g_sci_txReq(&gMcs12gSciData);
+	mcs12g_sci_getRxData(&gMcs12gSciData);
 }

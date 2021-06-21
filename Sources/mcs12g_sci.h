@@ -19,5 +19,6 @@ unsigned char mcs12g_sci_update(Mcs12gSciDataType* this);
 unsigned char mcs12g_sci_applyConfig(Mcs12gSciDataType* this);
 unsigned char mcs12g_sci_postInit(Mcs12gSciDataType* this);
 unsigned char mcs12g_sci_txReq(Mcs12gSciDataType* this);
+unsigned char mcs12g_sci_getRxData(Mcs12gSciDataType* this);
 
 #endif

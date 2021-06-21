@@ -106,13 +106,13 @@ unsigned char mcs12g_pwm_update(Mcs12gPwmDataType* this){
 		PWME = 0;
 		PWMPOL = this->mPolarity;
 		PWMCLK = 0xFF;
-		PWMPRCLK_PCKA = 4;
+		PWMPRCLK_PCKA = 4;				//24M/(2^4)
 		PWMPRCLK_PCKB = 4;
 		PWMCAE = this->mCenterAligned;
 		PWMCTL =  PWMCTL_PFRZ_MASK | PWMCTL_PSWAI_MASK;
 		PWMCLKAB = PWMCLKAB_PCLKAB2_MASK |  PWMCLKAB_PCLKAB3_MASK | PWMCLKAB_PCLKAB6_MASK | PWMCLKAB_PCLKAB7_MASK;
-		PWMSCLA = 50;
-		PWMSCLB = 50;
+		PWMSCLA = 75;					//x/2/75
+		PWMSCLB = 75;
 		PWMPER0 = this->mPeriod[0];
 		PWMPER1 = this->mPeriod[1];
 		PWMPER2 = this->mPeriod[2];

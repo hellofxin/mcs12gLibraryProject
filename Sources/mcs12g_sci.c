@@ -13,6 +13,17 @@ unsigned char appl_sci_update(){
 }
 
 /**
+unsigned char* mTxDataBufferPointer;
+unsigned char mTxDataBufferLength;
+unsigned char* mTxDataPointer;
+unsigned char mTxDataIndex;
+unsigned char* mRxDataBufferPointer;
+unsigned char mRxDataBufferLength;
+unsigned char* mRxDataPointer;
+unsigned char mRxDataLength;
+unsigned char mRxDataIndex;
+unsigned short mTxCounter;
+unsigned short mRxCounter;
 mStatus;
 mUpdateRequest;	
 mBaudRatePrescaler;
@@ -39,11 +50,15 @@ unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigD
 	this->mRIE = 1;
 	this->mTIE = 0;
 	this->mTCIE = 0;
-	this->mTxDataPointer = &gSciDataBuffer[0];
+	this->mTxDataBufferPointer = 0;
 	this->mTxDataLength = 0;
-	this->mTxDataLengthShadow = 0;
+	this->mTxDataPointer = 0;
+	this->mTxDataIndex = 0;
+	this->mRxDataBufferPointer = 0;
+	this->mRxDataBufferLength = 0;
 	this->mRxDataPointer = 0;
-	this->mRxDataIndex = 0;
+	this->mRxDataLength = 0;	
+	this->mRxDataIndex = 0;		
 	this->mRxCounter = 0;
 	this->mTxCounter = 0;
 	
@@ -74,14 +89,14 @@ unsigned char mcs12g_sci_update(Mcs12gSciDataType* this){
 	}
 	
 	if( this->mTxDataLength ){
-		this->mTxDataPointerCurrent = this->mTxDataPointer;
+		this->mTxDataPointer = this->mTxDataBufferPointer;
 		for( this->mTxDataIndex = 0; this->mTxDataIndex<this->mTxDataLength; this->mTxDataIndex++ ){
 			while( 0==SCI0SR1_TDRE );
-			SCI0DRL = *this->mTxDataPointerCurrent++; 
+			SCI0DRL = *this->mTxDataPointer++; 
 			this->mTxCounter++;
 		}
 		this->mTxDataLength = 0;
-		this->mTxDataPointer = 0;
+		this->mTxDataBufferPointer = 0;
 	}
 	return ERROR_OK;
 }
@@ -120,10 +135,16 @@ unsigned char mcs12g_sci_applyConfig(Mcs12gSciDataType* this){
 #pragma CODE_SEG NON_BANKED
 interrupt VectorNumber_Vsci0 void ISR_sci0(){
 	if( SCI0SR1_RDRF ){
-		gMcs12gSciData.mRxDataPointer[gMcs12gSciData.mRxDataIndex++] = SCI0DRL;	
-		if( gMcs12gSciData.mRxDataIndex>=100 ){
+		gMcs12gSciData.mRxDataBufferPointer[gMcs12gSciData.mRxDataIndex++] = SCI0DRL;	
+		if( gMcs12gSciData.mRxDataIndex>=gMcs12gSciData.mRxDataBufferLength ){
 			gMcs12gSciData.mRxDataIndex = 0;	
 		}
+		if( gMcs12gSciData.mRxDataLength< gMcs12gSciData.mRxDataBufferLength ){
+			gMcs12gSciData.mRxDataLength++;	
+		}
+		else{
+			
+		}		
 		gMcs12gSciData.mRxCounter++;
 		SCI0SR1_RDRF = 1;		
 	}
@@ -136,8 +157,12 @@ unsigned char mcs12g_sci_postInit(Mcs12gSciDataType* this){
 	for( i=0; i<22; i++ ){
 		gSciDataBuffer[i] = i;			
 	}	
-	this->mTxDataPointer = &gSciDataBuffer[0];
-	this->mRxDataPointer = &gSciDataBufferRx[0];
+	this->mTxDataBufferPointer = &gSciDataBuffer[0];
+	this->mTxDataLength = 0;	
+	this->mRxDataBufferPointer = &gSciDataBufferRx[0];
+	this->mRxDataBufferLength = 20;
+	this->mRxDataPointer = this->mRxDataBufferPointer;
+	
 	gSciDataBuffer[0] = 'S';	
 	gSciDataBuffer[1] = 'C';	
 	gSciDataBuffer[2] = 'I';	
@@ -150,13 +175,28 @@ unsigned char mcs12g_sci_postInit(Mcs12gSciDataType* this){
 	return ERROR_OK;
 }
 
-/**/
 unsigned char mcs12g_sci_txReq(Mcs12gSciDataType* this){
 	if(!this){
 		return ERROR_NOT_OK;
 	}
-	this->mTxDataLength = this->mTxDataLengthShadow;;
-	this->mTxDataPointer = &gSciDataBuffer[0];
+	this->mTxDataBufferPointer = &gSciDataBuffer[0];
+	this->mTxDataLength = 9;
 	return ERROR_OK;
 }
-/**/
+
+unsigned char mcs12g_sci_getRxData(Mcs12gSciDataType* this){
+	if( !this ){
+		return ERROR_NOT_OK;
+	}
+	if( this->mRxDataLength>=8 ){
+		this->mRxDataLength -= 8;
+		this->mRxDataPointer += 8;
+	}
+	else{
+		this->mRxDataPointer += this->mRxDataLength;
+		this->mRxDataLength = 0;			
+	}
+	if( this->mRxDataPointer > &(this->mRxDataBufferPointer[this->mRxDataBufferLength-1]) ){
+		this->mRxDataPointer = &this->mRxDataBufferPointer[0] + (this->mRxDataPointer - &this->mRxDataBufferPointer[this->mRxDataBufferLength-1]-1);						
+	}	
+}

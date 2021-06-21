@@ -21,12 +21,14 @@ typedef enum mcs12gSciDataModeDataType{
 
 typedef struct mcs12gSciDataType{
 	unsigned char mStatus;
-	unsigned char* mTxDataPointer;
-	unsigned char* mTxDataPointerCurrent;
+	unsigned char* mTxDataBufferPointer;
 	unsigned char mTxDataLength;
-	unsigned char mTxDataLengthShadow;
+	unsigned char* mTxDataPointer;
 	unsigned char mTxDataIndex;
+	unsigned char* mRxDataBufferPointer;
+	unsigned char mRxDataBufferLength;
 	unsigned char* mRxDataPointer;
+	unsigned char mRxDataLength;
 	unsigned char mRxDataIndex;
 	unsigned short mTxCounter;
 	unsigned short mRxCounter;
