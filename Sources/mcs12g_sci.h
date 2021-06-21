@@ -9,6 +9,7 @@
 #define ERROR_NOT_OK		1
 
 extern Mcs12gSciDataType gMcs12gSciData;
+extern unsigned char gSciDataBuffer[22];
 
 unsigned char appl_sci_init();
 unsigned char appl_sci_update();
@@ -17,5 +18,6 @@ unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigD
 unsigned char mcs12g_sci_update(Mcs12gSciDataType* this);
 unsigned char mcs12g_sci_applyConfig(Mcs12gSciDataType* this);
 unsigned char mcs12g_sci_postInit(Mcs12gSciDataType* this);
+unsigned char mcs12g_sci_txReq(Mcs12gSciDataType* this);
 
 #endif

@@ -24,8 +24,10 @@ typedef struct mcs12gSciDataType{
 	unsigned char* mTxDataPointer;
 	unsigned char* mTxDataPointerCurrent;
 	unsigned char mTxDataLength;
+	unsigned char mTxDataLengthShadow;
 	unsigned char mTxDataIndex;
-	unsigned short mRxData;
+	unsigned char* mRxDataPointer;
+	unsigned char mRxDataIndex;
 	unsigned short mTxCounter;
 	unsigned short mRxCounter;
 	unsigned char mUpdateRequest;	

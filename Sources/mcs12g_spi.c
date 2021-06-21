@@ -1,4 +1,5 @@
 #include "mcs12g_spi.h"
+#include "SPI.h"
 
 unsigned short gSpiDataBuffer[22];
 
@@ -86,9 +87,9 @@ unsigned char mcs12g_spi_update(Mcs12gSpiDataType* this){
 		for( this->mTxDataIndex=0; this->mTxDataIndex<this->mTxDataLength; this->mTxDataIndex++ ){
 			while( 0==SPI1SR_SPTEF );
 			this->mTxCounter++;
-			 data = *this->mTxDataPointerCurrent++;
-			 data |= 0xE001;
-			 SPI1DR = data;	
+			//SPI1DR = *this->mTxDataPointerCurrent++;
+			SPI_checkTxData();
+			 SPI1DR = SPI1TxData;	
 		}
 		this->mTxDataLength = 0;
 		//this->mTxDataPointer = 0;
@@ -137,6 +138,8 @@ unsigned char mcs12g_spi_postInit(Mcs12gSpiDataType* this){
 		gSpiDataBuffer[i] = i;
 	}
 	this->mTxDataPointer = &gSpiDataBuffer[0];
+	NCV_DATA_SET_DEFAULT;
+	NCV_STEP_LAMP_ON;
 	DDRT_DDRT7 = 1;
 	PTT_PTT7 = 1;	
 }

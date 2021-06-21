@@ -19,14 +19,16 @@ void main(void) {
 	appl_timer_init();
 	/**/
 	appl_schedule_init();
-	/**
+	/**/
 	appl_adc_init();
 	/**
 	appl_pwm_init();
-	/**
+	/**/
 	appl_sci_init();
 	/**
 	appl_spi_init();
+	/**/
+	IO_init();
 	/**/	
 	
 	EnableInterrupts;
@@ -46,14 +48,16 @@ void task_5ms(){
 void task_10ms(){
 	/**/
 	appl_timer_update();
-	/**
+	/**/
 	appl_adc_update();
 	/**
 	appl_pwm_update();
-	/**	
+	/**/	
 	appl_sci_update();
 	/**
 	appl_spi_update();
+	/**/
+	IO_update();
 	/**/
 	
 }
@@ -70,5 +74,6 @@ void task_200ms(){
 	
 }
 void task_1000ms(){
-	
+	gSciDataBuffer[8] = gMcs12gSciData.mTxCounter;	
+	mcs12g_sci_txReq(&gMcs12gSciData);
 }

@@ -1,7 +1,7 @@
 #ifndef SPI_H
 #define SPI_H
 
-#include "mc9s12g96.h"
+//#include "mc9s12g96.h"
 
 #define NCV_CHANNEL_ON	1
 #define NCV_CHANNEL_OFF 	0
@@ -100,7 +100,7 @@ extern TYPE_NCV7708Data 	_SPI1TxData;
 
 
 #define NCV_DATA_SET_DEFAULT				{	(NCV_SRR = NCV_CHANNEL_ON);   	\
-												(NCV_ULD = NCV_CHANNEL_OFF);		\
+												(NCV_ULD = NCV_CHANNEL_ON);		\
 												(NCV_OCD = NCV_CHANNEL_ON);		\
  												(NCV_OVLO = NCV_CHANNEL_ON);	\
  											}
@@ -152,10 +152,5 @@ void SPI_init();
 unsigned int SPI_sendBytes(unsigned int _buffer[], unsigned char _dataLength);
 unsigned int SPI_checkTxData();
 unsigned int SPI_Tx(unsigned int *_pData);
-
-	#define PIN_7708_CSB 		PTJ_PTJ3
-	#define PIN_7708_EN 		PTT_PTT7
-	#define PIN_7708_CSB_1		PTT_PTT6
-	#define PIN_7708_EN_1		PTT_PTT5
 
 #endif
