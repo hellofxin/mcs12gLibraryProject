@@ -4,30 +4,25 @@
 
 Mcs12gTimerDataType gMcs12gTimerData;
 
-unsigned char appl_timer_init(){
-	return mcs12g_timer_init(&gMcs12gTimerData, &gMcs12gTimerBswConfigData);	
-}
-unsigned char appl_timer_update(){
-	return mcs12g_timer_update(&gMcs12gTimerData);	
-}
-
 /**
-mStatus;
-mUpdateRequest;
-mInputCaptureOutputCompareSelect;
-mFourceOutput;
-mOutputCompareMask;
-mOutputCompareData;
-mOutputCompareModeLevelLow;
-mOutputCompareModeLevelHigh;
-mInputCaptureFallingRisingEdgeLow;
-minputCaptureFallingRisingEdgeHigh;
-mChannelInterruptEnable;
-mTimerCounterResetEnable;
-mTimerOverflowInterruptEnable;
-mTimerChannelCounter[MCS12G_TIMER_CHANNEL_NUMBER];	
-mOutputComparePinDisconnect;
-mPrecisionTimerPrescaler;
+	unsigned char mStatus;
+	unsigned long mTimerClockFrequency;
+	unsigned long mTimerCounter;
+	unsigned char mUpdateRequest;
+	unsigned char mInputCaptureOutputCompareSelect;
+	unsigned char mFourceOutput;
+	unsigned char mOutputCompareMask;
+	unsigned char mOutputCompareData;
+	unsigned char mOutputCompareModeLevelLow;
+	unsigned char mOutputCompareModeLevelHigh;
+	unsigned char mInputCaptureFallingRisingEdgeLow;
+	unsigned char minputCaptureFallingRisingEdgeHigh;
+	unsigned char mChannelInterruptEnable;
+	unsigned char mTimerCounterResetEnable;
+	unsigned char mTimerOverflowInterruptEnable;
+	unsigned short mTimerChannelCounter[MCS12G_TIMER_CHANNEL_NUMBER];	
+	unsigned char mOutputComparePinDisconnect;
+	unsigned char mPrecisionTimerPrescaler;
 /**/
 
 unsigned char mcs12g_timer_init(Mcs12gTimerDataType* this, const Mcs12gTimerBswConfigDataType* pBswConfigData){
@@ -37,21 +32,21 @@ unsigned char mcs12g_timer_init(Mcs12gTimerDataType* this, const Mcs12gTimerBswC
 	}
 	this->mStatus = 0;
 	this->mTimerClockFrequency = 0;
+	this->mTimerCounter = 0;
 	this->mUpdateRequest = 1;
 	this->mInputCaptureOutputCompareSelect = 0xFF;
 	this->mFourceOutput = 0;
 	this->mOutputCompareMask = 0;
 	this->mOutputCompareData = 0;
-	this->mOutputCompareModeLevelLow = 0x55;
-	this->mOutputCompareModeLevelHigh = 0x55;
-	this->mInputCaptureFallingRisingEdgeLow = 0xFF;
-	this->minputCaptureFallingRisingEdgeHigh = 0xFF;
-	this->mChannelInterruptEnable = 0xFF;
+	this->mOutputCompareModeLevelLow = 0;
+	this->mOutputCompareModeLevelHigh = 0;
+	this->mInputCaptureFallingRisingEdgeLow = 0;
+	this->minputCaptureFallingRisingEdgeHigh = 0;
+	this->mChannelInterruptEnable = 0;
 	this->mTimerCounterResetEnable = 1;
 	this->mTimerOverflowInterruptEnable = 0;
 	this->mOutputComparePinDisconnect = 0xFF;
 	this->mPrecisionTimerPrescaler = 23;
-	this->mTimerCounter = 0;
 	for( i=0; i<MCS12G_TIMER_CHANNEL_NUMBER; i++ ){
 		this->mTimerChannelCounter[i] = 0;	
 	}
@@ -74,9 +69,6 @@ unsigned char mcs12g_timer_init(Mcs12gTimerDataType* this, const Mcs12gTimerBswC
 			this->mTimerChannelCounter[i] = pBswConfigData->mTimerChannelCounter[i];	
 		}	
 	}
-	this->mTimerClockFrequency = appl_clock_getBusFrequency()/(this->mPrecisionTimerPrescaler+1);
-	
-	this->mUpdateRequest = 1;
 	this->mStatus = mcs12g_timer_applyConfig(this);
 	return ERROR_OK;	
 }
@@ -124,6 +116,7 @@ unsigned char mcs12g_timer_applyConfig(Mcs12gTimerDataType* this){
 	OCPD = this->mOutputComparePinDisconnect;
 	PTPSR = this->mPrecisionTimerPrescaler;
 	TSCR1_TEN = 1; 
+	this->mTimerClockFrequency = appl_clock_getBusFrequency()/(this->mPrecisionTimerPrescaler+1);
 	return ERROR_OK;	
 }
 
@@ -137,3 +130,21 @@ interrupt VectorNumber_Vtimch7 void ISR_timer_channel7(){
 	}
 }
 #pragma CODE_SEG DEFAULT
+
+unsigned long mcs12g_timer_getCounter(Mcs12gTimerDataType* this){
+	if( !this ){
+		return ERROR_NOT_OK;
+	}
+	return this->mTimerCounter;
+}
+
+
+unsigned char appl_timer_init(){
+	return mcs12g_timer_init(&gMcs12gTimerData, &gMcs12gTimerBswConfigData);	
+}
+unsigned char appl_timer_update(){
+	return mcs12g_timer_update(&gMcs12gTimerData);	
+}
+unsigned long appl_timer_getCounter(){
+	return mcs12g_timer_getCounter(&gMcs12gTimerData);	
+}

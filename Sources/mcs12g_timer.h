@@ -12,11 +12,12 @@ extern Mcs12gTimerDataType gMcs12gTimerData;
 
 unsigned char appl_timer_init();
 unsigned char appl_timer_update();
+unsigned long appl_timer_getCounter();
 
 unsigned char mcs12g_timer_init(Mcs12gTimerDataType* this, const Mcs12gTimerBswConfigDataType* pBswConfigData);
 unsigned char mcs12g_timer_update(Mcs12gTimerDataType* this); 
-
 unsigned char mcs12g_timer_applyConfig(Mcs12gTimerDataType* this); 
+unsigned long mcs12g_timer_getCounter(Mcs12gTimerDataType* this); 
 
 
 #endif

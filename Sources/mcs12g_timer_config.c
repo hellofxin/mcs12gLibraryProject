@@ -1,8 +1,7 @@
 #include "mcs12g_timer_config.h"
 
 /**
-mStatus;
-mUpdateRequest;
+mPrecisionTimerPrescaler;
 mInputCaptureOutputCompareSelect;
 mFourceOutput;
 mOutputCompareMask;
@@ -16,13 +15,15 @@ mTimerCounterResetEnable;
 mTimerOverflowInterruptEnable;
 mTimerChannelCounter[MCS12G_TIMER_CHANNEL_NUMBER];	
 mOutputComparePinDisconnect;
-mPrecisionTimerPrescaler;
 /**/
 	
+/**
+ ** @brief 一般只需调整mPrecisionTimerPrescaler和mTimerChannelCounter的值；
+ ** Ftimer = Fbus/(mPrecisionTimerPrescaler+1)
+ ** 当timer的硬件计数器的计数值达到mTimerChannelCounter[x(比如7)],时，产生中断
+/**/
 const Mcs12gTimerBswConfigDataType gMcs12gTimerBswConfigData = {
-	0,
-	0,
-	1,
+	23,
 	0x80,
 	0,
 	0,
@@ -35,9 +36,7 @@ const Mcs12gTimerBswConfigDataType gMcs12gTimerBswConfigData = {
 	1,
 	0, 
 	{ 1000, 1000, 1000, 1000, 	1000, 1000, 1000, 1000 },
-	0x80,
-	23,
-	0
+	0x80
 };
 	
 	
