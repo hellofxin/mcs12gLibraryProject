@@ -1,16 +1,10 @@
 #include "mcs12g_sci.h"
+#include "mcs12g_clock.h"
 
 Mcs12gSciDataType gMcs12gSciData;
 
 unsigned char gSciDataBuffer[22];
 unsigned char gSciDataBufferRx[100];
-
-unsigned char appl_sci_init(){
-	return mcs12g_sci_init(&gMcs12gSciData, &gMcs12gSciBswConfigData);	
-}
-unsigned char appl_sci_update(){
-	return mcs12g_sci_update(&gMcs12gSciData);	
-}
 
 /**
 unsigned char* mTxDataBufferPointer;
@@ -36,6 +30,13 @@ mTIE;
 mTCIE; 
 /**/
 
+/**
+When IREN = 0 then,
+SCI baud rate = SCI bus clock / (16 x SBR[12:0])
+When IREN = 1 then,
+SCI baud rate = SCI bus clock / (32 x SBR[12:1])
+/**/
+
 unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigDataType* pBswConfigData){
 	if( !this ){
 		return ERROR_NOT_OK;
@@ -44,7 +45,7 @@ unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigD
 	this->mUpdateRequest = 1;
 	this->mBaudRatePrescaler = 156;
 	this->mParityType = Mcs12gSciParity_even;
-	this->mParityEnable = 1;
+	this->mParityEnable = 0;
 	this->mDataMode = Mcs12gSciDataMode_8bit;
 	this->mLoopbackEnable = 0;
 	this->mRIE = 1;
@@ -72,13 +73,12 @@ unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigD
 		this->mTIE = pBswConfigData->mTIE;
 		this->mTCIE = pBswConfigData->mTCIE;			
 	}
-	
-	this->mUpdateRequest = 1;
 	mcs12g_sci_applyConfig(this);
 	mcs12g_sci_postInit(this);
 	
 	return ERROR_OK;	
 }
+
 unsigned char mcs12g_sci_update(Mcs12gSciDataType* this){
 	if( !this ){
 		return ERROR_NOT_OK;
@@ -87,17 +87,7 @@ unsigned char mcs12g_sci_update(Mcs12gSciDataType* this){
 		this->mUpdateRequest = 0;
 		mcs12g_sci_applyConfig(this);	
 	}
-	
-	if( this->mTxDataLength ){
-		this->mTxDataPointer = this->mTxDataBufferPointer;
-		for( this->mTxDataIndex = 0; this->mTxDataIndex<this->mTxDataLength; this->mTxDataIndex++ ){
-			while( 0==SCI0SR1_TDRE );
-			SCI0DRL = *this->mTxDataPointer++; 
-			this->mTxCounter++;
-		}
-		this->mTxDataLength = 0;
-		this->mTxDataBufferPointer = 0;
-	}
+	mcs12g_sci_update_tx(this);
 	return ERROR_OK;
 }
 
@@ -108,6 +98,7 @@ unsigned char mcs12g_sci_applyConfig(Mcs12gSciDataType* this){
 	if( !this ){
 		return ERROR_NOT_OK;
 	}
+	this->mUpdateRequest = 0;
 	SCI0CR2_RE = 0;
 	SCI0CR2_TE = 0;
 	SCI0BD_SBR = this->mBaudRatePrescaler;
@@ -128,29 +119,10 @@ unsigned char mcs12g_sci_applyConfig(Mcs12gSciDataType* this){
 	SCI0SR2_BRK13 = 0;
 	SCI0SR2_AMAP = 0;	
 	SCI0CR2_RE = 1;
-	SCI0CR2_TE = 1;			
+	SCI0CR2_TE = 1;	
+	this->mBaudrate = appl_clock_getBusFrequency()/16/(this->mBaudRatePrescaler);		
 	return ERROR_OK;	
 }
-
-#pragma CODE_SEG NON_BANKED
-interrupt VectorNumber_Vsci0 void ISR_sci0(){
-	if( SCI0SR1_RDRF ){
-		gMcs12gSciData.mRxDataBufferPointer[gMcs12gSciData.mRxDataIndex++] = SCI0DRL;	
-		if( gMcs12gSciData.mRxDataIndex>=gMcs12gSciData.mRxDataBufferLength ){
-			gMcs12gSciData.mRxDataIndex = 0;	
-		}
-		if( gMcs12gSciData.mRxDataLength< gMcs12gSciData.mRxDataBufferLength ){
-			gMcs12gSciData.mRxDataLength++;	
-		}
-		else{
-			
-		}		
-		gMcs12gSciData.mRxCounter++;
-		SCI0SR1_RDRF = 1;		
-	}
-	
-}
-#pragma CODE_SEG DEFAULT
 
 unsigned char mcs12g_sci_postInit(Mcs12gSciDataType* this){
 	unsigned char i = 0;
@@ -161,6 +133,7 @@ unsigned char mcs12g_sci_postInit(Mcs12gSciDataType* this){
 	this->mTxDataLength = 0;	
 	this->mRxDataBufferPointer = &gSciDataBufferRx[0];
 	this->mRxDataBufferLength = 20;
+	this->mRxDataIndex = 0;
 	this->mRxDataPointer = this->mRxDataBufferPointer;
 	
 	gSciDataBuffer[0] = 'S';	
@@ -175,6 +148,58 @@ unsigned char mcs12g_sci_postInit(Mcs12gSciDataType* this){
 	return ERROR_OK;
 }
 
+unsigned char mcs12g_sci_update_tx(Mcs12gSciDataType* this){
+	if( !this ){
+		return ERROR_NOT_OK;
+	}
+	if( this->mTxDataLength &&  this->mTxDataBufferPointer ){
+		this->mTxDataPointer = this->mTxDataBufferPointer;
+		for( this->mTxDataIndex = 0; this->mTxDataIndex<this->mTxDataLength; this->mTxDataIndex++ ){
+			while( 0==SCI0SR1_TDRE );
+			SCI0DRL = *this->mTxDataPointer++; 
+			this->mTxCounter++;
+		}
+		this->mTxDataLength = 0;
+		this->mTxDataBufferPointer = 0;
+	}
+	return ERROR_OK;	
+}
+
+unsigned char mcs12g_sci_update_rx(Mcs12gSciDataType* this){
+		this->mRxDataBufferPointer[this->mRxDataIndex++] = SCI0DRL;	
+		if( this->mRxDataIndex>=this->mRxDataBufferLength ){
+			this->mRxDataIndex = 0;	
+		}
+		if( this->mRxDataLength< this->mRxDataBufferLength ){
+			this->mRxDataLength++;	
+		}
+		else{
+			//onOverflow	
+		}		
+		this->mRxCounter++;	
+}
+
+#pragma CODE_SEG NON_BANKED
+interrupt VectorNumber_Vsci0 void ISR_sci0(){
+	if( SCI0SR1_RDRF ){
+		mcs12g_sci_update_rx(&gMcs12gSciData);
+		SCI0SR1_RDRF = 1;		
+	}	
+}
+#pragma CODE_SEG DEFAULT
+
+
+unsigned char appl_sci_init(){
+	return mcs12g_sci_init(&gMcs12gSciData, &gMcs12gSciBswConfigData);	
+}
+unsigned char appl_sci_update(){
+	return mcs12g_sci_update(&gMcs12gSciData);	
+}
+
+
+/**
+ ** @brief 和应用相关较强,要进一步处理
+/**/
 unsigned char mcs12g_sci_txReq(Mcs12gSciDataType* this){
 	if(!this){
 		return ERROR_NOT_OK;

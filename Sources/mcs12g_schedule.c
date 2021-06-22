@@ -10,15 +10,6 @@ TaskDataType gMcs12gScheduleTask[MCS12G_SCHEDULE_TASK_NUMBER] = {
 
 Mcs12gScheduleDataType gMcs12gScheduleData;
 
-unsigned char appl_schedule_init(){
-	return mcs12g_schedule_init(&gMcs12gScheduleData, &gMcs12gScheduleTask[0], MCS12G_SCHEDULE_TASK_NUMBER); 	
-}
-unsigned char appl_schedule_update(){
-	return mcs12g_schedule_update(&gMcs12gScheduleData);	
-}
-unsigned char appl_schedule_updateTaskFlag(){
-	return mcs12g_schedule_updateTaskFlag(&gMcs12gScheduleData);	
-}
 
 unsigned char mcs12g_schedule_init(Mcs12gScheduleDataType* this, TaskDataType* taskPointer, unsigned char taskNumber){
 	unsigned char i = 0;
@@ -64,5 +55,16 @@ unsigned char mcs12g_schedule_updateTaskFlag(Mcs12gScheduleDataType* this){
 		}
 	}
     	return ERROR_OK;
+}
+
+
+unsigned char appl_schedule_init(){
+	return mcs12g_schedule_init(&gMcs12gScheduleData, &gMcs12gScheduleTask[0], MCS12G_SCHEDULE_TASK_NUMBER); 	
+}
+unsigned char appl_schedule_update(){
+	return mcs12g_schedule_update(&gMcs12gScheduleData);	
+}
+unsigned char appl_schedule_updateTaskFlag(){
+	return mcs12g_schedule_updateTaskFlag(&gMcs12gScheduleData);	
 }
 
