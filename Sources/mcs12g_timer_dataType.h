@@ -5,6 +5,7 @@
 
 typedef struct mcs12gTimerDataType{
 	unsigned char mStatus;
+	unsigned long mTimerClockFrequency;
 	unsigned char mUpdateRequest;
 	unsigned char mInputCaptureOutputCompareSelect;
 	unsigned char mFourceOutput;

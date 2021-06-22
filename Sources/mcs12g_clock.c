@@ -42,13 +42,8 @@ mPOSTDIV;
 
 Mcs12gClockDataType gMcs12gClockData;
 
-unsigned char appl_clock_init(){
-	return mcs12g_clock_init(&gMcs12gClockData, &gMcs12gClockConfigData);	
-}
 
-unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, const Mcs12gClockConfigDataType* pConfigData){
-	static unsigned long timeoutCounter = 0;
-	unsigned long timeoutCounterMax = 60000;
+unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, const Mcs12gClockBswConfigDataType* pConfigData){
 	if( !this ){
 		return  ERROR_NOT_OK;
 	}
@@ -68,8 +63,6 @@ unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, const Mcs12gClockConf
 			&& IS_VCO_FREQUENCY_DATA_TYPE( this->mVCOFrequency )
 		){
 			this->mOscillatorFrequency = pConfigData->mOscillatorFrequency;
-			this->mPLLFrequency = pConfigData->mPLLFrequency;
-			this->mBusFrequency = pConfigData->mBusFrequency;
 			this->mReferenceFrequency = pConfigData->mReferenceFrequency;
 			this->mREFDIV = pConfigData->mREFDIV;
 			this->mVCOFrequency = pConfigData->mVCOFrequency;
@@ -77,7 +70,28 @@ unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, const Mcs12gClockConf
 			this->mPOSTDIV = pConfigData->mPOSTDIV;		
 		}
 	}	
-	
+	mcs12g_clock_applyConfig(this);
+	return ERROR_OK;	
+}
+
+unsigned char mcs12g_clock_update(Mcs12gClockDataType* this){
+	if( !this ){
+		return ERROR_NOT_OK;
+	}
+	if( 1==this->mUpdateRequest ){
+		this->mUpdateRequest = 0;
+		mcs12g_clock_applyConfig(this);			
+	}
+	return ERROR_OK;
+}
+
+unsigned char mcs12g_clock_applyConfig(Mcs12gClockDataType* this){
+	static unsigned long timeoutCounter = 0;
+	unsigned long timeoutCounterMax = 60000;
+	if( !this ){
+		return ERROR_NOT_OK;
+	}
+	this->mUpdateRequest = 0;
 	CPMUPROT = 0x26;
 	CPMUOSC_OSCE = 0;
 	CPMUCLKS_PLLSEL = 1;	
@@ -96,7 +110,27 @@ unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, const Mcs12gClockConf
 		this->mStatus = ERROR_NOT_OK;
 	}	
 	CPMUPROT = 0;
-	this->mPLLFrequency = pConfigData->mOscillatorFrequency/(this->mREFDIV+1)*2*(this->mSYNDIV+1)/(this->mPOSTDIV+1);
+	this->mPLLFrequency = this->mOscillatorFrequency/(this->mREFDIV+1)*2*(this->mSYNDIV+1)/(this->mPOSTDIV+1);
 	this->mBusFrequency = this->mPLLFrequency/2;
-	return ERROR_OK;	
+	return ERROR_OK;
+}
+
+unsigned long mcs12g_clock_getBusFrequency(Mcs12gClockDataType* this){
+	if( !this ){
+		return ERROR_NOT_OK;
+	}
+	return this->mBusFrequency;
+}
+
+
+unsigned char appl_clock_init(){
+	return mcs12g_clock_init(&gMcs12gClockData, &gMcs12gClockBswConfigData);	
+}
+
+unsigned char appl_clock_update(){
+	return mcs12g_clock_update(&gMcs12gClockData);	
+}
+
+unsigned long appl_clock_getBusFrequency(){
+	return mcs12g_clock_getBusFrequency(&gMcs12gClockData);	
 }

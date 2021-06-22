@@ -3,6 +3,6 @@
 
 #include "mcs12g_clock_dataType.h"
 
-extern const Mcs12gClockConfigDataType gMcs12gClockConfigData;
+extern const Mcs12gClockBswConfigDataType gMcs12gClockBswConfigData;
 
 #endif

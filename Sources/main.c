@@ -45,6 +45,8 @@ void task_5ms(){
 }
 void task_10ms(){
 	/**/
+	appl_clock_update();
+	/**/
 	appl_timer_update();
 	/**/
 	appl_adc_update();

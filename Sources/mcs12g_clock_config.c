@@ -29,10 +29,7 @@ If PLL is selected (PLLSEL=1) 			Fbus = Fpll/2
 /**/
 
 /**
-mStatus;	
 mOscillatorFrequency;
-mPLLFrequency;
-mBusFrequency;
 mReferenceFrequency;
 mREFDIV;
 mVCOFrequency;
@@ -40,11 +37,12 @@ mSYNDIV;
 mPOSTDIV;
 /**/
 
-const Mcs12gClockConfigDataType gMcs12gClockConfigData = {
-	0,
+/**
+ ** @brief 对于一般需求，只需改mPOSTDIV；
+ ** 	Fvco = 48MHz, Fbus = Fvco/(POSTDIV +1)/2
+/**/
+const Mcs12gClockBswConfigDataType gMcs12gClockBswConfigData = {
 	OscillatorFrequency_8MHZ,
-	48000000,
-	24000000,
 	ReferenceFrequency_default,
 	0,
 	VCOFrequency_default,

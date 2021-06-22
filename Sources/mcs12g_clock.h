@@ -38,7 +38,15 @@ If PLL is selected (PLLSEL=1) 			Fbus = Fpll/2
 
 extern Mcs12gClockDataType gMcs12gClockData;
 
-unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, const Mcs12gClockConfigDataType* pConfigData);
+
 unsigned char appl_clock_init();
+unsigned char appl_clock_update();
+unsigned long appl_clock_getBusFrequency();
+
+unsigned char mcs12g_clock_init(Mcs12gClockDataType* this, const Mcs12gClockBswConfigDataType* pConfigData);
+unsigned char mcs12g_clock_update(Mcs12gClockDataType* this);
+unsigned char mcs12g_clock_applyConfig(Mcs12gClockDataType* this);
+unsigned long mcs12g_clock_getBusFrequency(Mcs12gClockDataType* this);
+
 
 #endif

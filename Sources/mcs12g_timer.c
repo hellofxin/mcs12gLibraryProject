@@ -1,4 +1,5 @@
 #include "mcs12g_timer.h"
+#include "mcs12g_clock.h"
 #include "mcs12g_schedule.h"
 
 Mcs12gTimerDataType gMcs12gTimerData;
@@ -35,6 +36,7 @@ unsigned char mcs12g_timer_init(Mcs12gTimerDataType* this, const Mcs12gTimerBswC
 		return ERROR_NOT_OK;
 	}
 	this->mStatus = 0;
+	this->mTimerClockFrequency = 0;
 	this->mUpdateRequest = 1;
 	this->mInputCaptureOutputCompareSelect = 0xFF;
 	this->mFourceOutput = 0;
@@ -72,6 +74,7 @@ unsigned char mcs12g_timer_init(Mcs12gTimerDataType* this, const Mcs12gTimerBswC
 			this->mTimerChannelCounter[i] = pBswConfigData->mTimerChannelCounter[i];	
 		}	
 	}
+	this->mTimerClockFrequency = appl_clock_getBusFrequency()/(this->mPrecisionTimerPrescaler+1);
 	
 	this->mUpdateRequest = 1;
 	this->mStatus = mcs12g_timer_applyConfig(this);

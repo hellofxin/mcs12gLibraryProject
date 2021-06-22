@@ -58,6 +58,7 @@ typedef struct mcs12gClockDataType{
 	unsigned long mOscillatorFrequency;
 	unsigned long mPLLFrequency;
 	unsigned long mBusFrequency;
+	unsigned char mUpdateRequest;
 	unsigned char mReferenceFrequency;
 	unsigned char mREFDIV;
 	unsigned char mVCOFrequency;
@@ -65,7 +66,15 @@ typedef struct mcs12gClockDataType{
 	unsigned char mPOSTDIV;	
 }Mcs12gClockDataType;
 
-typedef Mcs12gClockDataType Mcs12gClockConfigDataType;
+typedef struct mcs12gClockBswConfigDataType{
+	unsigned long mOscillatorFrequency;
+	unsigned char mReferenceFrequency;
+	unsigned char mREFDIV;
+	unsigned char mVCOFrequency;
+	unsigned char mSYNDIV;
+	unsigned char mPOSTDIV;	
+}Mcs12gClockBswConfigDataType;
+
 
 #define IS_REFERENCE_FREQUENCY_DATA_TYPE(p)		(	ReferenceFrequency_1MHZ_2MHZ==(p)			\
 													|| ReferenceFrequency_2MHZ_6MHZ==(p)			\
