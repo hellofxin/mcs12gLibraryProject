@@ -18,5 +18,6 @@ unsigned char mcs12g_spi_update(Mcs12gSpiDataType* this);
 
 unsigned char mcs12g_spi_applyConfig(Mcs12gSpiDataType* this);
 unsigned char mcs12g_spi_postInit(Mcs12gSpiDataType* this);
+unsigned char mcs12g_spi_txRequest(Mcs12gSpiDataType* this);
 
 #endif

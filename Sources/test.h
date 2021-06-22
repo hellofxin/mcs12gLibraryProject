@@ -112,45 +112,9 @@ extern TYPE_NCV7708Data 	_SPI1TxData;
  								(NCV_OVLO = NCV_CHANNEL_OFF);		\
  							}
 
-#define POSITION_NCV_STEP_LAMP			2
-#define POSITION_NCV_MIRROR_HEAT_LED	4
-#define POSITION_NCV_DOOR_LAMP			6
-#define POSITION_NCV_MIRROR_UR_U			12
-#define POSITION_NCV_MIRROR_UR_D			11	
-#define POSITION_NCV_MIRROR_D_U			7
-#define POSITION_NCV_MIRROR_D_D			8
-#define POSITION_NCV_MIRROR_L_L			10	
-#define POSITION_NCV_MIRROR_L_R			9
-#define POSITION_NCV_MIRROR_UR_L			11	
-#define POSITION_NCV_MIRROR_UR_R			12
 
-#define MASK_NCV_UD_U_HIGH                 (((unsigned int)1)<<POSITION_NCV_MIRROR_UR_U)
-#define MASK_NCV_UD_U_LOW                  (((unsigned int)1)<<POSITION_NCV_MIRROR_D_U)
-#define MASK_NCV_LR_R_HIGH                 (((unsigned int)1)<<POSITION_NCV_MIRROR_UR_R)
-#define MASK_NCV_LR_R_LOW                  (((unsigned int)1)<<POSITION_NCV_MIRROR_L_R)
 
-#define MASK_NCV_STEP_LAMP	  			( (unsigned int)(1<<POSITION_NCV_STEP_LAMP) )
-#define MASK_NCV_MIRROR_HEAT_LED		( (unsigned int)(1<<POSITION_NCV_MIRROR_HEAT_LED) )
-#define MASK_NCV_DOOR_LAMP				( (unsigned int)(1<<POSITION_NCV_DOOR_LAMP) )
-#define MASK_NCV_MIRROR_UD_U			( (unsigned int)( (1<<POSITION_NCV_MIRROR_UR_U)|(1<<POSITION_NCV_MIRROR_D_U) ) )
-#define MASK_NCV_MIRROR_UD_D			( (unsigned int)( (1<<POSITION_NCV_MIRROR_UR_D)|(1<<POSITION_NCV_MIRROR_D_D) ) )
-#define MASK_NCV_MIRROR_LR_L				( (unsigned int)( (1<<POSITION_NCV_MIRROR_UR_L)|(1<<POSITION_NCV_MIRROR_L_L) ) )
-#define MASK_NCV_MIRROR_LR_R				( (unsigned int)( (1<<POSITION_NCV_MIRROR_UR_R)|(1<<POSITION_NCV_MIRROR_L_R) ) )
-#define MASK_NCV_OCD		(1<<13)
-#define MASK_NCV_ULD		(1<<14)
-#define MASK_NCV_OVLO		(1<<15)
- 																							 
-typedef struct SPIDataBuffer{
-	unsigned int* pData;
-	unsigned char  dataLength;
-}SPIDataBuffer;
-
-extern unsigned int SPI1RxData;
 extern TYPE_NCV7708Data 	_SPI1TxData;
 
-void SPI_init();
-unsigned int SPI_sendBytes(unsigned int _buffer[], unsigned char _dataLength);
-unsigned int SPI_checkTxData();
-unsigned int SPI_Tx(unsigned int *_pData);
 
 #endif

@@ -1,7 +1,5 @@
 #include "mcs12g_spi.h"
-#include "SPI.h"
-
-unsigned short gSpiDataBuffer[22];
+#include "test.h"
 
 Mcs12gSpiDataType gMcs12gSpiData;
 
@@ -14,6 +12,9 @@ unsigned char appl_spi_update(){
 };
 
 /**
+unsigned short* mTxDataPointer;
+unsigned char mTxDataLength;
+unsigned short mRxData;
 mStatus;
 mUpdateRequest;
 mMasterEnable;
@@ -44,9 +45,7 @@ unsigned char mcs12g_spi_init(Mcs12gSpiDataType* this, const Mcs12gSpiBswConfigD
 	this->mSPR = 2;
 	this->mSPPR = 2;
 	this->mTxDataPointer = 0;
-	this->mTxDataPointerCurrent = 0;
 	this->mTxDataLength = 0;
-	this->mTxDataIndex = 0;
 	this->mRxData = 0;
 	this->mTxCounter = 0;
 	this->mRxCounter = 0;
@@ -83,16 +82,12 @@ unsigned char mcs12g_spi_update(Mcs12gSpiDataType* this){
 		mcs12g_spi_applyConfig(this);
 	}
 	if( this->mTxDataLength ){
-		this->mTxDataPointerCurrent = this->mTxDataPointer;
-		for( this->mTxDataIndex=0; this->mTxDataIndex<this->mTxDataLength; this->mTxDataIndex++ ){
-			while( 0==SPI1SR_SPTEF );
-			this->mTxCounter++;
-			//SPI1DR = *this->mTxDataPointerCurrent++;
-			SPI_checkTxData();
-			 SPI1DR = SPI1TxData;	
-		}
-		this->mTxDataLength = 0;
+		while( 0==SPI1SR_SPTEF );
+		SPI_checkTxData();
+		SPI1DR = *this->mTxDataPointer;
+		this->mTxCounter++;
 		//this->mTxDataPointer = 0;
+		this->mTxDataLength = 0;
 	}
 	return ERROR_OK;
 }
@@ -133,13 +128,22 @@ interrupt VectorNumber_Vspi1 void ISR_spi1(){
 /**/
 
 unsigned char mcs12g_spi_postInit(Mcs12gSpiDataType* this){
-	unsigned char i = 0;	
-	for( i=0; i<22; i++ ){
-		gSpiDataBuffer[i] = i;
+	if( !this ){
+		return ERROR_NOT_OK;
 	}
-	this->mTxDataPointer = &gSpiDataBuffer[0];
+	this->mTxDataPointer = (unsigned short*)&_SPI1TxData;
 	NCV_DATA_SET_DEFAULT;
 	NCV_STEP_LAMP_ON;
 	DDRT_DDRT7 = 1;
 	PTT_PTT7 = 1;	
+	return ERROR_OK;
+}
+
+unsigned char mcs12g_spi_txRequest(Mcs12gSpiDataType* this){
+	if( !this ){
+		return ERROR_NOT_OK;
+	}
+	this->mTxDataPointer = (unsigned short*)&_SPI1TxData;
+	this->mTxDataLength = 1;
+	return ERROR_OK;	
 }
