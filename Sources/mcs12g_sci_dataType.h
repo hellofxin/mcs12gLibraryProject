@@ -33,6 +33,7 @@ typedef struct mcs12gSciDataType{
 	unsigned char mRxDataLength;
 	unsigned short mTxCounter;
 	unsigned short mRxCounter;
+	unsigned char mFlushRxDataBuffer;
 	unsigned char mUpdateRequest;	
 	unsigned char mBaudRatePrescaler;
 	unsigned char mParityType;

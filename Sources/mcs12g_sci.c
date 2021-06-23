@@ -62,6 +62,7 @@ unsigned char mcs12g_sci_init(Mcs12gSciDataType* this, const Mcs12gSciBswConfigD
 	this->mRxDataIndex = 0;		
 	this->mRxCounter = 0;
 	this->mTxCounter = 0;
+	this->mFlushRxDataBuffer = 0;
 	
 	if( pBswConfigData ){
 		this->mBaudRatePrescaler = pBswConfigData->mBaudRatePrescaler;
@@ -86,6 +87,10 @@ unsigned char mcs12g_sci_update(Mcs12gSciDataType* this){
 	if( 1==this->mUpdateRequest ){
 		this->mUpdateRequest = 0;
 		mcs12g_sci_applyConfig(this);	
+	}
+	if( 1==this->mFlushRxDataBuffer ){
+		this->mFlushRxDataBuffer = 0;
+		mcs12g_sci_flushRxDataBuffer(this);	
 	}
 	mcs12g_sci_update_tx(this);
 	return ERROR_OK;
@@ -200,19 +205,21 @@ unsigned char appl_sci_update(){
 /**
  ** @brief 和应用相关较强,要进一步处理
 /**/
-unsigned char mcs12g_sci_txReq(Mcs12gSciDataType* this){
+unsigned char mcs12g_sci_txReq(Mcs12gSciDataType* this, unsigned char* pData, unsigned char length){
 	if(!this){
 		return ERROR_NOT_OK;
 	}
-	this->mTxDataBufferPointer = &gSciDataBuffer[0];
-	this->mTxDataLength = 9;
+	this->mTxDataBufferPointer = pData;
+	this->mTxDataLength = length;
 	return ERROR_OK;
 }
 
-unsigned char mcs12g_sci_getRxData(Mcs12gSciDataType* this){
+unsigned char mcs12g_sci_getRxData(Mcs12gSciDataType* this, unsigned char* pData, unsigned char length){
+	unsigned char i = 0;
 	if( !this ){
 		return ERROR_NOT_OK;
 	}
+	/**
 	if( this->mRxDataLength>=8 ){
 		this->mRxDataLength -= 8;
 		this->mRxDataPointer += 8;
@@ -223,5 +230,30 @@ unsigned char mcs12g_sci_getRxData(Mcs12gSciDataType* this){
 	}
 	if( this->mRxDataPointer > &(this->mRxDataBufferPointer[this->mRxDataBufferLength-1]) ){
 		this->mRxDataPointer = &this->mRxDataBufferPointer[0] + (this->mRxDataPointer - &this->mRxDataBufferPointer[this->mRxDataBufferLength-1]-1);						
-	}	
+	}
+	/**/	
+	for( i=0; i<length; i++ ){
+		if(this->mRxDataLength){
+			this->mRxDataLength--;
+			pData[i] = *this->mRxDataPointer++;	
+			if( this->mRxDataPointer > &(this->mRxDataBufferPointer[this->mRxDataBufferLength-1]) ){
+				this->mRxDataPointer = &this->mRxDataBufferPointer[0];						
+			}			
+		}
+		else{
+			return ERROR_OK;
+		}	
+	}
+	return ERROR_OK;
+}
+
+unsigned char mcs12g_sci_flushRxDataBuffer(Mcs12gSciDataType* this){
+	if(!this){
+		return ERROR_NOT_OK;
+	}
+	this->mFlushRxDataBuffer = 0;
+	this->mRxDataPointer = this->mRxDataBufferPointer;
+	this->mRxDataLength = 0;
+	this->mRxDataIndex = 0;
+	return ERROR_OK;	
 }

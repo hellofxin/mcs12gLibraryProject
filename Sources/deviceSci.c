@@ -16,11 +16,13 @@ char deviceSci_open(const char* path, unsigned char flag){
 }
 
 char deviceSci_read(unsigned char fd, void* buffer, unsigned char count){
-	//*(unsigned char*)buffer = gMcs12gSciData.mRxData;
+	mcs12g_sci_getRxData(&gMcs12gSciData, (unsigned char*)buffer, count);
+	return 0;
 }
 
 char deviceSci_write(unsigned char fd, void* buffer, unsigned char count){
-		
+	mcs12g_sci_txReq(&gMcs12gSciData, (unsigned char*)buffer, count);
+	return 0;		
 }
 
 char deviceSci_close(unsigned char fd){
