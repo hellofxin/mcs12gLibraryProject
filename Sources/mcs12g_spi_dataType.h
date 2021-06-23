@@ -12,8 +12,10 @@ typedef enum mcs12gSpiDataWidthDataType{
 
 typedef struct mcs12gSpiDataType{
 	unsigned char mStatus;
+	unsigned long mBaudrate;
 	unsigned short* mTxDataPointer;
 	unsigned char mTxDataLength;
+	unsigned short mTxData;
 	unsigned short mRxData;
 	unsigned short mTxCounter;
 	unsigned short mRxCounter;
@@ -32,7 +34,6 @@ typedef struct mcs12gSpiDataType{
 
 
 typedef struct mcs12gSpiBswConfigDataType{
-	unsigned char mUpdateRequest;
 	unsigned char mMasterEnable;
 	unsigned char mLeastSignificantBitFirstEnable;
 	unsigned char mSlaveSelectOutputEnable;

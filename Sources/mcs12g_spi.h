@@ -15,9 +15,11 @@ unsigned char appl_spi_update();
 
 unsigned char mcs12g_spi_init(Mcs12gSpiDataType* this, const Mcs12gSpiBswConfigDataType* pBswConfigData);
 unsigned char mcs12g_spi_update(Mcs12gSpiDataType* this);
-
 unsigned char mcs12g_spi_applyConfig(Mcs12gSpiDataType* this);
+unsigned char mcs12g_spi_update_tx(Mcs12gSpiDataType* this);
+unsigned char mcs12g_spi_update_rx(Mcs12gSpiDataType* this);
 unsigned char mcs12g_spi_postInit(Mcs12gSpiDataType* this);
 unsigned char mcs12g_spi_txRequest(Mcs12gSpiDataType* this);
+unsigned long userPow(unsigned char x, unsigned char y);
 
 #endif

@@ -1,8 +1,6 @@
 #include "mcs12g_spi_config.h"
 
 /**
-mStatus;
-mUpdateRequest;
 mMasterEnable;
 mLeastSignificantBitFirstEnable;
 mSlaveSelectOutputEnable;
@@ -15,8 +13,12 @@ mSPR;
 mSPPR;	
 /**/
 
+/**
+ ** BaudRateDivisor = (SPPR + 1) * 2^(SPR + 1)
+ ** Baud Rate = BusClock / BaudRateDivisor
+/**/
+
 const Mcs12gSpiBswConfigDataType gMcs12gSpiBswConfigData = {
-	1,
 	1,
 	1,
 	1,

@@ -23,7 +23,7 @@ void main(void) {
 	appl_adc_init();
 	/**
 	appl_pwm_init();
-	/**/
+	/**
 	appl_sci_init();
 	/**/
 	appl_spi_init();
@@ -52,7 +52,7 @@ void task_10ms(){
 	appl_adc_update();
 	/**
 	appl_pwm_update();
-	/**/	
+	/**	
 	appl_sci_update();
 	/**/
 	appl_spi_update();
@@ -70,8 +70,13 @@ void task_100ms(){
 void task_200ms(){
 	
 }
+
+unsigned char x,y;
+unsigned long result;
+
 void task_1000ms(){
-	mcs12g_sci_txReq(&gMcs12gSciData);
-	mcs12g_sci_getRxData(&gMcs12gSciData);
+	//mcs12g_sci_txReq(&gMcs12gSciData);
+	//mcs12g_sci_getRxData(&gMcs12gSciData);
 	mcs12g_spi_txRequest(&gMcs12gSpiData);
+	result = userPow(x,y);
 }

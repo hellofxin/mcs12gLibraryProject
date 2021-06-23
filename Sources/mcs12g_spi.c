@@ -1,15 +1,8 @@
 #include "mcs12g_spi.h"
+#include "mcs12g_clock.h"
 #include "test.h"
 
 Mcs12gSpiDataType gMcs12gSpiData;
-
-unsigned char appl_spi_init(){
-	return mcs12g_spi_init(&gMcs12gSpiData, &gMcs12gSpiBswConfigData);	
-}
-
-unsigned char appl_spi_update(){
-	return mcs12g_spi_update(&gMcs12gSpiData);	
-};
 
 /**
 unsigned short* mTxDataPointer;
@@ -33,6 +26,7 @@ unsigned char mcs12g_spi_init(Mcs12gSpiDataType* this, const Mcs12gSpiBswConfigD
 		return ERROR_NOT_OK;
 	}
 	this->mStatus = 0;
+	this->mBaudrate = 0;
 	this->mUpdateRequest = 1;
 	this->mMasterEnable = 1;
 	this->mLeastSignificantBitFirstEnable = 0;
@@ -64,8 +58,6 @@ unsigned char mcs12g_spi_init(Mcs12gSpiDataType* this, const Mcs12gSpiBswConfigD
 		this->mSPR = pBswConfigData->mSPR;
 		this->mSPPR = pBswConfigData->mSPPR;		
 	}
-	
-	this->mUpdateRequest = 1;
 	this ->mStatus = mcs12g_spi_applyConfig(this);
 	mcs12g_spi_postInit(this);
 
@@ -81,14 +73,7 @@ unsigned char mcs12g_spi_update(Mcs12gSpiDataType* this){
 		this->mUpdateRequest = 0;
 		mcs12g_spi_applyConfig(this);
 	}
-	if( this->mTxDataLength ){
-		while( 0==SPI1SR_SPTEF );
-		SPI_checkTxData();
-		SPI1DR = *this->mTxDataPointer;
-		this->mTxCounter++;
-		//this->mTxDataPointer = 0;
-		this->mTxDataLength = 0;
-	}
+       mcs12g_spi_update_tx(this);
 	return ERROR_OK;
 }
 
@@ -111,22 +96,66 @@ unsigned char mcs12g_spi_applyConfig(Mcs12gSpiDataType* this){
 	SPI1CR2_XFRW = this->mDataWidth;
 	SPI1BR_SPR = this->mSPR;
 	SPI1BR_SPPR = this->mSPPR;
-	SPI1CR1_SPE = 1;		
+	SPI1CR1_SPE = 1;	
+	this->mBaudrate = appl_clock_getBusFrequency()/(this->mSPPR+1)/userPow(2,this->mSPR+1);	
 	return ERROR_OK;	
 }
 
-/**/
+unsigned char mcs12g_spi_update_tx(Mcs12gSpiDataType* this){
+	if( !this ){
+		return ERROR_NOT_OK;
+	}
+	if( this->mTxDataLength && this->mTxDataPointer ){
+		while( 0==SPI1SR_SPTEF );
+		SPI_checkTxData();
+		this->mTxData = *this->mTxDataPointer;
+		SPI1DR = this->mTxData; 
+		this->mTxCounter++;
+		this->mTxDataPointer = 0;
+		this->mTxDataLength = 0;
+	}	
+	return ERROR_OK;
+}
+
+unsigned char mcs12g_spi_update_rx(Mcs12gSpiDataType* this){
+	gMcs12gSpiData.mRxData = SPI1DR;	
+	gMcs12gSpiData.mRxCounter++;	
+}
+
 #pragma CODE_SEG NON_BANKED
 interrupt VectorNumber_Vspi1 void ISR_spi1(){
 	if( SPI1SR_SPIF ){
-		gMcs12gSpiData.mRxData = SPI1DR;	
-		gMcs12gSpiData.mRxCounter++;
+	  	mcs12g_spi_update_rx(&gMcs12gSpiData);
 		SPI1SR_SPIF = 1;	
 	}
 }
 #pragma CODE_SEG DEFAULT
-/**/
 
+
+unsigned char appl_spi_init(){
+	return mcs12g_spi_init(&gMcs12gSpiData, &gMcs12gSpiBswConfigData);	
+}
+
+unsigned char appl_spi_update(){
+	return mcs12g_spi_update(&gMcs12gSpiData);	
+}
+
+unsigned long userPow(unsigned char x, unsigned char y){
+	unsigned char i = 0;
+	unsigned long result = 1;
+	if( x==0 ){
+		return 0;
+	}
+	for(i=0; i<y; i++){
+		result *= x;
+	}
+	return result;
+}
+
+
+/**
+ ** @brief 和应用强相关，需要进一步处理
+/**/
 unsigned char mcs12g_spi_postInit(Mcs12gSpiDataType* this){
 	if( !this ){
 		return ERROR_NOT_OK;
